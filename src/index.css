@@ -26,7 +26,7 @@ body {
   background-color: #ffffff;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   width: 90%;
   max-width: 1000px;
   height: 85vh;
@@ -68,7 +68,7 @@ body {
 
 .formulario-login label {
   font-size: 0.875rem;
-  color: #666;
+  color: #1d99c7;
   margin-bottom: 8px;
   font-weight: 400;
 }
@@ -80,41 +80,41 @@ body {
 
 .formulario-login input {
   width: 100%;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #d7d7d7;
   border-radius: 6px;
   padding: 12px 14px;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   font-size: 0.95rem;
   box-sizing: border-box;
+  background-color: #f9f9f9;
 }
 
 .formulario-login input:focus {
-  border-color: #ff27f1;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  box-shadow: 0 10px 40px rgba(43, 43, 43, 0.4);
 }
 
 .formulario-login input::placeholder {
-  color: #bbb;
+  color: #5c5c5c;
 }
 
 /* Ícono de ojo para contraseña */
 .input-wrapper .toggle-password {
   position: absolute;
   right: 14px;
-  top: 50%;
+  top: 50%; 
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  color: #999;
+  color: #8c8c8c;
   padding: 4px;
   display: flex;
   align-items: center;
 }
 
 .input-wrapper .toggle-password:hover {
-  color: #666;
+  color: #474747;
 }
 
 /* Botón */
@@ -133,7 +133,7 @@ body {
 
 .formulario-login button[type="submit"]:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(233, 30, 140, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .formulario-login button[type="submit"]:active {
@@ -153,7 +153,7 @@ body {
   text-align: center;
   margin-bottom: 12px;
   padding: 8px;
-  background-color: #FFE8F0;
+  background-color: #fcd8e4;
   border-radius: 6px;
 }
 
@@ -192,12 +192,14 @@ body {
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 850px) {
   .contenedor-login {
     padding: 10px;
   }
-  
-  .lado-derecho img.logo {
-    width: 130px;
+
+  .lado-izquierdo {
+    height: 150px;
+    flex: none;
+    border-radius: 24px 24px 0 0;
   }
 }
