@@ -1,4 +1,4 @@
-/* === Fondo global sin borde blanco === */
+/* === LOGIN -- Fondo global sin borde blanco === */
 html,
 body {
   margin: 0;
@@ -15,7 +15,7 @@ body {
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #E91E8C 0%, #9C4CB8 50%, #4A90E2 100%);
+  background: linear-gradient(135deg, #E91E8C 0%, #4A90E2 100%);
   padding: 20px;
   box-sizing: border-box;
 }
@@ -28,14 +28,14 @@ body {
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   width: 90%;
-  max-width: 1000px;
+  max-width: 850px;
   height: 85vh;
   max-height: 600px;
 }
 
 /* Lado izquierdo con imagen - MÁS GRANDE */
 .lado-izquierdo {
-  flex: 1.4; /* Más ancho que antes */
+  flex: 0.5; /* Más ancho que antes */
   background: url("/src/assets/manos.jpg") center/cover no-repeat;
   border-top-left-radius: 24px;
   border-bottom-left-radius: 24px;
@@ -43,7 +43,7 @@ body {
 
 /* Lado derecho (formulario) - MÁS PEQUEÑO */
 .lado-derecho {
-  flex: 1; /* Proporción menor */
+  flex: 0.5; /* Proporción menor */
   padding: 40px 50px;
   display: flex;
   flex-direction: column;
@@ -70,7 +70,7 @@ body {
   font-size: 0.875rem;
   color: #1d99c7;
   margin-bottom: 8px;
-  font-weight: 400;
+  font-weight: 650;
 }
 
 .input-wrapper {
@@ -95,7 +95,7 @@ body {
 }
 
 .formulario-login input::placeholder {
-  color: #5c5c5c;
+  color: #474747;
 }
 
 /* Ícono de ojo para contraseña */
@@ -155,6 +155,7 @@ body {
   padding: 8px;
   background-color: #fcd8e4;
   border-radius: 6px;
+  font-weight: 630;
 }
 
 /* Responsivo */
@@ -181,7 +182,7 @@ body {
   }
 
   .lado-izquierdo {
-    height: 220px;
+    height: 145px;
     flex: none;
     border-radius: 24px 24px 0 0;
   }
@@ -192,14 +193,200 @@ body {
   }
 }
 
-@media (max-width: 850px) {
+@media (max-width: 450px) {
   .contenedor-login {
     padding: 10px;
   }
 
   .lado-izquierdo {
-    height: 150px;
+    height: 110px;
     flex: none;
     border-radius: 24px 24px 0 0;
   }
 }
+
+
+
+/* ======== ADMIN LAYOUT ======== */
+.layout-admin {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background: #eef2f5;
+}
+
+/* Sidebar con degradado */
+.barra-lateral {
+  grid-row: 1 / span 2;
+  padding: 16px 12px;
+  background: linear-gradient(180deg, #F4299E, #2FB3F1);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-radius: 0 18px 18px 0;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+
+.menu {
+  margin-top: 16px;
+  display: grid;
+  gap: 10px;
+}
+.menu a, .menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.menu a.activo { background: rgba(255,255,255,0.22); }
+
+/* Topbar */
+.topbar {
+  grid-column: 2 / 3;
+  background: linear-gradient(90deg, #C541F4, #4198F4);
+  color: #fff;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom-left-radius: 18px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+.titulo-seccion {
+  margin: 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Contenido principal */
+.main-admin {
+  grid-column: 2 / 3;
+  padding: 18px;
+}
+
+/* ======== PRODUCTOS ======== */
+.pagina-productos .productos-topbar {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.acciones-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-verde {
+  background: #2bb673;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(43,182,115,.35);
+}
+
+.select-filtro {
+  appearance: none;
+  background: #e6eef3;
+  border: 1px solid #c9d7e1;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.buscador {
+  display: flex;
+  align-items: center;
+  background: #e6eef3;
+  border: 1px solid #c9d7e1;
+  padding: 4px;
+  border-radius: 10px;
+}
+.buscador input {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 8px 10px;
+  min-width: 200px;
+}
+.buscador button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* Grid de cards */
+.grid-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.card-producto {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.18);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-img {
+  background-size: cover;
+  background-position: center;
+  height: 160px;
+}
+
+.card-contenido {
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.card-titulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+  line-height: 1.2;
+  height: 2.6em;        /* 2 líneas aprox */
+  overflow: hidden;
+}
+
+.card-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-precio {
+  font-weight: 800;
+  color: #0e3b2e;
+}
+
+.btn-editar {
+  background: #6b8290;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* Estados */
+.estado { padding: 12px; color: #374151; }
+.estado.error { color: #b3261e; }
+.resumen-lista { margin-top: 12px; color: #6b7280; }

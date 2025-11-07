@@ -1,29 +1,39 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import { borrarToken } from "./servicios/auth";
 
 export default function LayoutAdmin() {
-  const nav = useNavigate();
-
   function cerrarSesion() {
     borrarToken();
-    nav("/administracion/acceso", { replace: true });
+    location.href = "/administracion/acceso";
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100">
-      <header className="flex items-center justify-between p-4 border-b border-neutral-800">
-        <h1 className="text-lg font-semibold">Panel administrativo</h1>
-        <nav className="flex items-center gap-4">
-          <Link to="/administracion" className="hover:underline">Productos</Link>
-          <Link to="/administracion/usuarios" className="hover:underline">Usuarios</Link>
-          <Link to="/administracion/contactos" className="hover:underline">Contactos</Link>
-          <Link to="/administracion/buzon" className="hover:underline">Buzón</Link>
-          <button onClick={cerrarSesion} className="px-3 py-1 rounded bg-red-600 hover:bg-red-500">
-            Salir
-          </button>
+    <div className="layout-admin">
+      {/* Sidebar */}
+      <aside className="barra-lateral">
+        <div style={{ display:"flex", alignItems:"center", gap:10, padding:"6px 8px" }}>
+          <div style={{ width:42, height:42, borderRadius:12, background:"#fff" }} />
+          <div style={{ fontWeight:700, lineHeight:"1.1" }}>Fundación<br/>Felicidad A.C</div>
+        </div>
+
+        <nav className="menu">
+          <NavLink to="/administracion/productos" className={({isActive}) => isActive ? "activo" : ""}>📦 Productos</NavLink>
+          <NavLink to="/administracion/usuarios">👤 Usuarios</NavLink>
+          <NavLink to="/administracion/configuracion">⚙️ Configuración</NavLink>
+          <NavLink to="/administracion/buzon">📬 Buzón</NavLink>
+          <NavLink to="/administracion/contactos">☎️ Contactos</NavLink>
+          <button onClick={cerrarSesion}>↩ Salir</button>
         </nav>
+      </aside>
+
+      {/* Topbar */}
+      <header className="topbar">
+        <h2 className="titulo-seccion">Panel administrativo</h2>
+        <div>Super-Admin</div>
       </header>
-      <main className="p-6">
+
+      {/* Contenido */}
+      <main className="main-admin">
         <Outlet />
       </main>
     </div>
