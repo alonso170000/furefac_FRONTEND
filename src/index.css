@@ -4,8 +4,13 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden; /* Evita scroll en el body */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* Permitir scroll en el body */
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* === Login dividido: imagen izquierda + formulario === */
