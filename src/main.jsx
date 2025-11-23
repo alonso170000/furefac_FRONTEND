@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./index.css";
+import "./main.css";
 
 import App from "./App.jsx";
 
@@ -14,7 +14,6 @@ import Productos from "./administracion/paginas/Productos.jsx";
 
 // PÚBLICO
 import PrincipalHome from "./principal/Home.jsx";
-
 
 const router = createBrowserRouter([
   // público

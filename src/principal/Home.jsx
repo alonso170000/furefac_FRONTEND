@@ -1,22 +1,98 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { listarProductos } from "../administracion/servicios/productos";
+import imgPlaceholder from "../assets/manos.jpg";
 import "./Home.css";
+
+const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const formatoMXN = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
+
+function normalizarCategoria(producto) {
+  return (producto?.categoria || producto?.categoria_nombre || producto?.nombre_categoria || "")
+    .toString()
+    .trim();
+}
+
+function normalizarRutaImagen(ruta) {
+  if (!ruta) return imgPlaceholder;
+  if (ruta.startsWith("http://") || ruta.startsWith("https://") || ruta.startsWith("data:")) return ruta;
+
+  const limpia = ruta.trim();
+  if (limpia.startsWith("/img/")) return limpia;          // imágenes servidas desde public/img
+  if (limpia.startsWith("img/")) return `/${limpia}`;
+
+  if (API_URL) {
+    const sinSlash = limpia.startsWith("/") ? limpia.slice(1) : limpia;
+    return `${API_URL}/${sinSlash}`;
+  }
+  return limpia || imgPlaceholder;
+}
+
+function formatearPrecio(valor) {
+  const numero = Number(valor);
+  return formatoMXN.format(Number.isFinite(numero) ? numero : 0);
+}
 
 export default function PrincipalHome() {
   const [formData, setFormData] = useState({
     nombre: "",
     correo: "",
     telefono: "",
-    comentario: ""
+    comentario: "",
   });
 
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState("todos");
+  const [productos, setProductos] = useState([]);
+  const [cargandoProductos, setCargandoProductos] = useState(true);
+  const [errorProductos, setErrorProductos] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
+  useEffect(() => {
+    cargarProductos();
+  }, []);
+
+  async function cargarProductos() {
+    try {
+      setCargandoProductos(true);
+      setErrorProductos("");
+      const data = await listarProductos({ activo: 1 });
+      setProductos(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setErrorProductos(e?.message || "No se pudieron cargar los productos.");
+    } finally {
+      setCargandoProductos(false);
+    }
+  }
+
+  const categoriasDisponibles = useMemo(() => {
+    const set = new Set();
+    productos.forEach((p) => {
+      const cat = normalizarCategoria(p);
+      if (cat) set.add(cat);
+    });
+    return Array.from(set);
+  }, [productos]);
+
+  const productosFiltrados = useMemo(() => {
+    const termino = busqueda.trim().toLowerCase();
+    const catSeleccionada = categoria.toLowerCase();
+
+    return productos.filter((p) => {
+      const catProd = normalizarCategoria(p).toLowerCase();
+      const coincideCategoria = categoria === "todos" || catProd === catSeleccionada;
+      const coincideBusqueda =
+        !termino ||
+        p?.nombre?.toLowerCase().includes(termino) ||
+        p?.descripcion?.toLowerCase().includes(termino) ||
+        catProd.includes(termino);
+      return coincideCategoria && coincideBusqueda;
+    });
+  }, [productos, busqueda, categoria]);
+
   function handleInputChange(e) {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleSubmit(e) {
@@ -25,15 +101,25 @@ export default function PrincipalHome() {
     setMensaje("");
 
     try {
-      // Aquí iría tu llamada al backend
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setMensaje("¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setMensaje("Mensaje enviado con éxito. Nos pondremos en contacto contigo pronto.");
       setFormData({ nombre: "", correo: "", telefono: "", comentario: "" });
     } catch {
       setMensaje("Hubo un error al enviar el mensaje. Por favor intenta nuevamente.");
     } finally {
       setEnviando(false);
+    }
+  }
+
+  function irAContacto(nombreProducto) {
+    setFormData((prev) => ({
+      ...prev,
+      comentario: nombreProducto ? `Quiero cotizar ${nombreProducto}` : prev.comentario,
+    }));
+
+    const seccion = document.getElementById("contacto");
+    if (seccion) {
+      seccion.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 
@@ -55,7 +141,7 @@ export default function PrincipalHome() {
           </nav>
           
           <div className="header-logo">
-            <img src="/src/assets/FUNDACIÓN_BLANCO.png" alt="Fundación Recolectando Felicidad A.C" />
+            <img src="/src/assets/fundacion_blanco.png" alt="Fundación Recolectando Felicidad A.C" />
           </div>
         </div>
       </header>
@@ -84,136 +170,43 @@ export default function PrincipalHome() {
               onChange={(e) => setCategoria(e.target.value)}
             >
               <option value="todos">Todos</option>
-              <option value="tazas">Tazas</option>
-              <option value="playeras">Playeras</option>
-              <option value="termos">Termos</option>
-              <option value="accesorios">Accesorios</option>
+              {categoriasDisponibles.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
             </select>
             
-            <div className="buscador-productos">
+            <form className="buscador-productos" onSubmit={(e) => e.preventDefault()}>
               <input 
                 type="text" 
                 placeholder="Buscar"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
               />
-              <button type="button">🔍</button>
-            </div>
+              <button type="submit">Buscar</button>
+            </form>
           </div>
         </div>
 
         <div className="grid-productos-publico">
-          {/* Producto 1 - Taza amarilla */}
-          <article className="card-producto-publico">
-            <div className="card-imagen">
-              <img src="/src/assets/productos/taza-amarilla.jpg" alt="Taza cerámica amarilla" />
-            </div>
-            <div className="card-info">
-              <h3 className="card-titulo">Taza cerámica amarilla con estampado de un aguacate...</h3>
-              <div className="card-pie">
-                <span className="card-precio">$1,000.00</span>
-                <button className="btn-cotizar">Cotizar</button>
-              </div>
-            </div>
-          </article>
+          {cargandoProductos && (
+            <div className="estado-productos">Cargando productos...</div>
+          )}
 
-          {/* Producto 2 - Termo */}
-          <article className="card-producto-publico">
-            <div className="card-imagen">
-              <img src="/src/assets/productos/termo.jpg" alt="Termo" />
-            </div>
-            <div className="card-info">
-              <h3 className="card-titulo">Taza cerámica amarilla con estampado de un aguacate...</h3>
-              <div className="card-pie">
-                <span className="card-precio">$50,000.00</span>
-                <button className="btn-cotizar">Cotizar</button>
-              </div>
-            </div>
-          </article>
+          {errorProductos && (
+            <div className="estado-productos estado-error">{errorProductos}</div>
+          )}
 
-          {/* Producto 3 - Playera */}
-          <article className="card-producto-publico">
-            <div className="card-imagen">
-              <img src="/src/assets/productos/playera-naranja.jpg" alt="Playera naranja" />
-            </div>
-            <div className="card-info">
-              <h3 className="card-titulo">Taza cerámica amarilla con estampado de un aguacate...</h3>
-              <div className="card-pie">
-                <span className="card-precio">$601.00</span>
-                <button className="btn-cotizar">Cotizar</button>
-              </div>
-            </div>
-          </article>
+          {!cargandoProductos && !errorProductos && productosFiltrados.length === 0 && (
+            <div className="estado-productos">No hay productos para mostrar.</div>
+          )}
 
-          {/* Producto 4 - Libreta */}
-          <article className="card-producto-publico">
-            <div className="card-imagen">
-              <img src="/src/assets/productos/libreta.jpg" alt="Libreta dorada" />
-            </div>
-            <div className="card-info">
-              <h3 className="card-titulo">Taza cerámica amarilla con estampado de un aguacate...</h3>
-              <div className="card-pie">
-                <span className="card-precio">$99,999.00</span>
-                <button className="btn-cotizar">Cotizar</button>
-              </div>
-            </div>
-          </article>
-
-          {/* Producto 5 - Portarretratos */}
-          <article className="card-producto-publico">
-            <div className="card-imagen">
-              <img src="/src/assets/productos/portarretratos.jpg" alt="Portarretratos" />
-            </div>
-            <div className="card-info">
-              <h3 className="card-titulo">Taza cerámica amarilla con estampado de un aguacate...</h3>
-              <div className="card-pie">
-                <span className="card-precio">$1,000.00</span>
-                <button className="btn-cotizar">Cotizar</button>
-              </div>
-            </div>
-          </article>
-
-          {/* Producto 6 - Llavero */}
-          <article className="card-producto-publico">
-            <div className="card-imagen">
-              <img src="/src/assets/productos/llavero.jpg" alt="Llavero" />
-            </div>
-            <div className="card-info">
-              <h3 className="card-titulo">Taza cerámica amarilla con estampado de un aguacate...</h3>
-              <div className="card-pie">
-                <span className="card-precio">$1,000.00</span>
-                <button className="btn-cotizar">Cotizar</button>
-              </div>
-            </div>
-          </article>
-
-          {/* Producto 7 - Espejo */}
-          <article className="card-producto-publico">
-            <div className="card-imagen">
-              <img src="/src/assets/productos/espejo.jpg" alt="Espejo personalizado" />
-            </div>
-            <div className="card-info">
-              <h3 className="card-titulo">Taza cerámica amarilla con estampado de un aguacate...</h3>
-              <div className="card-pie">
-                <span className="card-precio">$1,000.00</span>
-                <button className="btn-cotizar">Cotizar</button>
-              </div>
-            </div>
-          </article>
-
-          {/* Producto 8 - Placa QR */}
-          <article className="card-producto-publico">
-            <div className="card-imagen">
-              <img src="/src/assets/productos/placa-qr.jpg" alt="Placa QR WiFi" />
-            </div>
-            <div className="card-info">
-              <h3 className="card-titulo">Taza cerámica amarilla con estampado de un aguacate...</h3>
-              <div className="card-pie">
-                <span className="card-precio">$1,000.00</span>
-                <button className="btn-cotizar">Cotizar</button>
-              </div>
-            </div>
-          </article>
+          {!cargandoProductos && !errorProductos && productosFiltrados.map((producto) => (
+            <PublicProductCard
+              key={producto.id ?? producto.nombre}
+              producto={producto}
+              onCotizar={() => irAContacto(producto.nombre)}
+            />
+          ))}
         </div>
       </section>
 
@@ -304,17 +297,17 @@ export default function PrincipalHome() {
 
           <div className="footer-columna">
             <h4>Contáctanos</h4>
-            <p>📧 contacto@fundacionfelicidad.org</p>
-            <p>📱 +52 (999) 123-4567</p>
-            <p>📍 Cancún, Quintana Roo, México</p>
+            <p>Correo: contacto@fundacionfelicidad.org</p>
+            <p>Teléfono: +52 (999) 123-4567</p>
+            <p>Ubicación: Cancún, Quintana Roo, México</p>
           </div>
 
           <div className="footer-columna">
             <h4>Síguenos</h4>
             <div className="footer-redes">
-              <a href="#" aria-label="Facebook">📘 Facebook</a>
-              <a href="#" aria-label="Instagram">📷 Instagram</a>
-              <a href="#" aria-label="Twitter">🐦 Twitter</a>
+              <a href="#" aria-label="Facebook">Facebook</a>
+              <a href="#" aria-label="Instagram">Instagram</a>
+              <a href="#" aria-label="Twitter">Twitter</a>
             </div>
           </div>
 
@@ -331,5 +324,67 @@ export default function PrincipalHome() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function PublicProductCard({ producto, onCotizar }) {
+  const [indice, setIndice] = useState(0);
+  let imagenes = [];
+  if (Array.isArray(producto?.imagenes)) {
+    imagenes = producto.imagenes.filter(Boolean);
+  } else if (typeof producto?.imagenes === "string" && producto.imagenes.length) {
+    if (producto.imagenes.includes("||")) {
+      imagenes = producto.imagenes.split("||").filter(Boolean);
+    } else {
+      try { imagenes = JSON.parse(producto.imagenes); } catch { imagenes = []; }
+    }
+  }
+  if (!imagenes.length) {
+    const fallback =
+      producto?.imagen ||
+      producto?.foto ||
+      producto?.ruta ||
+      producto?.ruta_imagen ||
+      producto?.imagen_principal;
+    imagenes = [fallback];
+  }
+  imagenes = imagenes.map(normalizarRutaImagen);
+
+  const actual = imagenes[indice] || imgPlaceholder;
+  const precio = formatearPrecio(producto?.precio_mxn ?? producto?.precio ?? producto?.costo ?? 0);
+  const categoriaProducto = normalizarCategoria(producto);
+
+  function siguiente() {
+    setIndice((i) => (i + 1) % imagenes.length);
+  }
+  function anterior() {
+    setIndice((i) => (i - 1 + imagenes.length) % imagenes.length);
+  }
+
+  return (
+    <article 
+      className="card-producto-publico" 
+      title={producto.descripcion || producto.nombre}
+    >
+      <div className="card-imagen">
+        <img src={actual} alt={producto.nombre || "Producto"} />
+        {imagenes.length > 1 && (
+          <>
+            <button className="slider-btn-public left" type="button" onClick={anterior} aria-label="Anterior">‹</button>
+            <button className="slider-btn-public right" type="button" onClick={siguiente} aria-label="Siguiente">›</button>
+          </>
+        )}
+      </div>
+      <div className="card-info">
+        {categoriaProducto && <span className="card-categoria">{categoriaProducto}</span>}
+        <h3 className="card-titulo">{producto.nombre}</h3>
+        <div className="card-pie-principal">
+          <span className="card-precio">{precio}</span>
+          <button type="button" className="btn-cotizar" onClick={onCotizar}>
+            Cotizar
+          </button>
+        </div>
+      </div>
+    </article>
   );
 }
