@@ -11,12 +11,13 @@ import LayoutAdmin from "./administracion/LayoutAdmin.jsx";
 import Acceso from "./administracion/paginas/Acceso.jsx";
 import Panel from "./administracion/paginas/Panel.jsx";
 import Productos from "./administracion/paginas/Productos.jsx";
+import Usuarios from "./administracion/paginas/Usuarios.jsx"; // ← AGREGAR ESTA LÍNEA
 
 // PÚBLICO
 import PrincipalHome from "./principal/Home.jsx";
 
 const router = createBrowserRouter([
-  // público
+  // ========== RUTAS PÚBLICAS ==========
   {
     path: "/",
     element: <App />,
@@ -25,10 +26,13 @@ const router = createBrowserRouter([
     ],
   },
 
-  // login admin
-  { path: "/administracion/acceso", element: <Acceso /> },
+  // ========== LOGIN ADMIN ==========
+  { 
+    path: "/administracion/acceso", 
+    element: <Acceso /> 
+  },
 
-  // protegido admin
+  // ========== RUTAS PROTEGIDAS ADMIN (TODO EN UN SOLO BLOQUE) ==========
   {
     path: "/administracion",
     element: <Protegida />,
@@ -36,27 +40,29 @@ const router = createBrowserRouter([
       {
         element: <LayoutAdmin />,
         children: [
-          { index: true, element: <Panel /> },
+          { index: true, element: <Panel /> },              // /administracion
+          { path: "panel", element: <Panel /> },             // /administracion/panel
+          { path: "productos", element: <Productos /> },     // /administracion/productos
+          { path: "usuarios", element: <Usuarios /> },       // /administracion/usuarios ← AGREGAR ESTA LÍNEA
         ],
       },
     ],
   },
 
-  {
-    path: "/administracion",
-    element: <Protegida />,
-    children: [
-      {
-        element: <LayoutAdmin />,
-        children: [
-          { index: true, element: <Productos /> },        // página por defecto
-          { path: "productos", element: <Productos /> },
-        ],
-      },
-    ],
+  // ========== 404 ==========
+  { 
+    path: "*", 
+    element: (
+      <div style={{ 
+        padding: "40px", 
+        textAlign: "center",
+        fontSize: "18px",
+        color: "#666"
+      }}>
+        404 - Página no encontrada
+      </div>
+    ) 
   },
-
-  { path: "*", element: <div ></div> },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
