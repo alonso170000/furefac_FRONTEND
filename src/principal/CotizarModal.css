@@ -1,0 +1,547 @@
+/* ===========================
+   Animaciones
+   =========================== */
+@keyframes cotizar-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cotizar-pop {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===========================
+   Overlay (similar a modal-backdrop)
+   =========================== */
+.cotizar-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  animation: cotizar-fade-in 0.22s ease-out;
+}
+
+/* ===========================
+   Contenedor principal del modal
+   =========================== */
+.cotizar-modal {
+  width: min(980px, 96vw);
+  max-height: 90vh;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f44ba1 0%, #6c5ff8 45%, #2fb3f1 100%);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;          /* clip del gradiente */
+  display: flex;             /* para poder hacer scroll en el body */
+  flex-direction: column;
+  color: #ffffff;
+  animation: cotizar-pop 0.22s ease-out;
+}
+
+.cotizar-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+/* Título flotando al centro, similar a “Nuevo producto” */
+.cotizar-title {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 1.85rem;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  text-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+/* ===========================
+   Grid interno (BODY del modal)
+   con SCROLL
+   =========================== */
+.cotizar-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  background: rgba(255, 255, 255, 0.06);
+  flex: 1;                     /* ocupa el alto disponible */
+  overflow-y: auto;            /* SCROLL del contenido */
+  min-height: 0;               /* permite que el flex recorte correctamente */
+}
+
+/* Scrollbar sutil */
+.cotizar-grid::-webkit-scrollbar {
+  width: 8px;
+}
+.cotizar-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.cotizar-grid::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.24);
+  border-radius: 999px;
+}
+
+/* Columna base */
+.cotizar-col {
+  position: relative;
+  padding: 28px 26px;
+}
+
+/* ===========================
+   Columna izquierda: producto
+   =========================== */
+.cotizar-col-left {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.14),
+    rgba(0, 0, 0, 0.02)
+  );
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.cotizar-left-panel {
+  width: 100%;
+  max-width: 480px;
+  margin: 12px auto;
+  background: rgba(12, 9, 36, 0.35);
+  border-radius: 18px;
+  padding: 20px 18px 22px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    0 18px 38px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(4px);
+}
+
+.cotizar-left-content {
+  display: grid;
+  gap: 10px;
+}
+
+.cotizar-eyebrow {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  opacity: 0.9;
+}
+
+.cotizar-categoria {
+  margin: 0;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.cotizar-image-card {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+.cotizar-image-frame {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #ffffff 0%, #dbeafe 40%, #0f172a 100%);
+  min-height: 200px;
+}
+
+.cotizar-image-frame img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+.cotizar-image-placeholder {
+  width: 100%;
+  height: 260px;
+  border-radius: 14px;
+  background: repeating-linear-gradient(
+    135deg,
+    #0f172a 0,
+    #0f172a 6px,
+    #111827 6px,
+    #111827 12px
+  );
+  opacity: 0.8;
+}
+
+/* Botones de slider dentro del modal */
+.cotizar-modal .slider-btn-public {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.9rem;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.6);
+}
+
+.cotizar-modal .slider-btn-public.left {
+  left: 10px;
+}
+
+.cotizar-modal .slider-btn-public.right {
+  right: 10px;
+}
+
+.cotizar-titulo {
+  margin: 12px 0 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+}
+
+.cotizar-descripcion {
+  margin: 8px 0 0;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+
+.cotizar-precio {
+  margin-top: 10px;
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+/* ===========================
+   Columna derecha: formulario
+   =========================== */
+.cotizar-col-right {
+  background: #f9fafb;
+  color: #0f172a;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+
+.cotizar-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  border: none;
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.cotizar-right-head {
+  margin-bottom: 14px;
+}
+
+.cotizar-right-head h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.cotizar-note {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.cotizar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cotizar-section {
+  padding: 10px 0;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.cotizar-section:last-of-type {
+  border-bottom: none;
+}
+
+.cotizar-section h4 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.cotizar-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+/* Campos */
+.cotizar-field {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #111827;
+  font-weight: 700;
+}
+
+.cotizar-field span {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.92rem;
+}
+
+.cotizar-field input,
+.cotizar-field textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.cotizar-field input:focus,
+.cotizar-field textarea:focus {
+  border-color: #6c5ff8;
+  box-shadow: 0 0 0 2px rgba(108, 95, 248, 0.24);
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.cotizar-field textarea {
+  resize: vertical;
+  min-height: 110px;
+  font-family: inherit;
+}
+
+.cotizar-input-short {
+  max-width: 120px;
+}
+
+/* ===========================
+   Upload de imágenes
+   =========================== */
+.cotizar-upload {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cotizar-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-upload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: linear-gradient(120deg, #6c5ff8, #2dc8ed);
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.28);
+}
+
+.hidden-input {
+  display: none;
+}
+
+.cotizar-upload-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.cotizar-upload-info strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.cotizar-upload-info small {
+  font-size: 0.78rem;
+}
+
+/* Zona de drop (drag & drop) */
+.cotizar-dropzone {
+  margin-top: 8px;
+  border: 1.8px dashed #cbd5f5;
+  border-radius: 16px;
+  padding: 14px 14px;
+  background: #f3f4ff;
+  font-size: 0.85rem;
+  color: #4b5563;
+  text-align: center;
+}
+
+/* ===========================
+   Preview de imágenes
+   =========================== */
+.cotizar-preview-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.cotizar-preview-card {
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+.cotizar-preview-card img {
+  width: 100%;
+  height: 120px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.cotizar-preview-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.cotizar-preview-footer span {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===========================
+   Acciones / botones
+   =========================== */
+.cotizar-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Usa btn-secundario del admin para Cancelar,
+   y este estilo para el botón principal */
+.btn-primario-cotizar {
+  min-width: 130px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 10px 20px rgba(22, 163, 74, 0.35);
+}
+
+.btn-primario-cotizar:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* ===========================
+   Responsivo
+   =========================== */
+
+/* Alturas bajas: reduce un poco el alto máximo */
+@media (max-height: 780px) {
+  .cotizar-modal {
+    max-height: 84vh;
+  }
+}
+
+/* Tablets / pantallas medianas */
+@media (max-width: 1024px) {
+  .cotizar-grid {
+    grid-template-columns: 1fr;
+  }
+  .cotizar-col-left {
+    min-height: 260px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 640px) {
+  .cotizar-modal {
+    width: 94vw;
+    max-height: 88vh;
+  }
+  .cotizar-col {
+    padding: 20px 18px;
+  }
+  .cotizar-title {
+    font-size: 1.5rem;
+  }
+  .cotizar-actions {
+    flex-direction: column;
+  }
+  .cotizar-actions .btn-secundario,
+  .cotizar-actions .btn-primario-cotizar {
+    width: 100%;
+  }
+}
+
+/* Móviles muy pequeños */
+@media (max-width: 480px) {
+  .cotizar-modal {
+    width: 96vw;
+  }
+  .cotizar-titulo {
+    font-size: 1.22rem;
+  }
+  .cotizar-precio {
+    font-size: 1.6rem;
+  }
+}

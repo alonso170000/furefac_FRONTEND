@@ -11,7 +11,8 @@ import LayoutAdmin from "./administracion/LayoutAdmin.jsx";
 import Acceso from "./administracion/paginas/Acceso.jsx";
 import Panel from "./administracion/paginas/Panel.jsx";
 import Productos from "./administracion/paginas/Productos.jsx";
-import Usuarios from "./administracion/paginas/Usuarios.jsx"; // ← AGREGAR ESTA LÍNEA
+import Usuarios from "./administracion/paginas/Usuarios.jsx";
+import Cotizaciones from "./administracion/paginas/Cotizaciones.jsx";
 
 // PÚBLICO
 import PrincipalHome from "./principal/Home.jsx";
@@ -43,7 +44,8 @@ const router = createBrowserRouter([
           { index: true, element: <Panel /> },              // /administracion
           { path: "panel", element: <Panel /> },             // /administracion/panel
           { path: "productos", element: <Productos /> },     // /administracion/productos
-          { path: "usuarios", element: <Usuarios /> },       // /administracion/usuarios ← AGREGAR ESTA LÍNEA
+          { path: "usuarios", element: <Usuarios /> },       // /administracion/usuarios
+          { path: "buzon/cotizaciones", element: <Cotizaciones /> },
         ],
       },
     ],

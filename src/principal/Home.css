@@ -265,6 +265,7 @@ body {
   background-position: right 15px center;
   box-shadow: 0 4px 12px rgba(40, 219, 108, 0.3);
   transition: all 0.3s ease;
+  outline: none;
 }
 
 .select-categoria:hover {
@@ -441,7 +442,6 @@ body {
   border-color: #fca5a5;
   color: #991b1b;
 }
-
 
 /* ============================================
    SECCIÓN CONTACTO
@@ -872,4 +872,5 @@ body {
   .info-titulo {
     font-size: 1.6rem;
   }
+
 }

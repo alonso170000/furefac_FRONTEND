@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { listarProductos } from "../administracion/servicios/productos";
 import imgPlaceholder from "../assets/manos.jpg";
 import "./Home.css";
+import "./CotizarModal.css";
 
 const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 const formatoMXN = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
@@ -47,6 +48,20 @@ export default function PrincipalHome() {
   const [errorProductos, setErrorProductos] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState("");
+  const [modalCotizarAbierta, setModalCotizarAbierta] = useState(false);
+  const [productoCotizando, setProductoCotizando] = useState(null);
+  const [indiceImagenCotizar, setIndiceImagenCotizar] = useState(0);
+  const [formCotizar, setFormCotizar] = useState({
+    nombre: "",
+    correo: "",
+    telefono: "",
+    descripcion: "",
+    cantidad: 1,
+  });
+  const [imagenesAdjuntas, setImagenesAdjuntas] = useState([]);
+  const [enviandoCotizacion, setEnviandoCotizacion] = useState(false);
+  const [mensajeCotizacion, setMensajeCotizacion] = useState("");
+  const [errorCotizacion, setErrorCotizacion] = useState("");
 
   useEffect(() => {
     cargarProductos();
@@ -90,9 +105,48 @@ export default function PrincipalHome() {
     });
   }, [productos, busqueda, categoria]);
 
+  const imagenesProductoCotizar = useMemo(() => {
+    if (!productoCotizando) return [];
+    let imgs = [];
+    if (Array.isArray(productoCotizando.imagenes)) {
+      imgs = productoCotizando.imagenes.filter(Boolean);
+    } else if (typeof productoCotizando?.imagenes === "string" && productoCotizando.imagenes.length) {
+      if (productoCotizando.imagenes.includes("||")) {
+        imgs = productoCotizando.imagenes.split("||").filter(Boolean);
+      } else {
+        try { imgs = JSON.parse(productoCotizando.imagenes); } catch { imgs = []; }
+      }
+    }
+    if (!imgs.length) {
+      const fallback =
+        productoCotizando?.imagen ||
+        productoCotizando?.foto ||
+        productoCotizando?.ruta ||
+        productoCotizando?.ruta_imagen ||
+        productoCotizando?.imagen_principal;
+      imgs = [fallback];
+    }
+    return imgs.map(normalizarRutaImagen).filter(Boolean);
+  }, [productoCotizando]);
+
+  const precioProductoCotizar = useMemo(() => {
+    if (!productoCotizando) return "";
+    const valor = productoCotizando?.precio_mxn ?? productoCotizando?.precio ?? productoCotizando?.costo ?? 0;
+    return formatearPrecio(valor);
+  }, [productoCotizando]);
+
   function handleInputChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
   async function handleSubmit(e) {
@@ -111,15 +165,114 @@ export default function PrincipalHome() {
     }
   }
 
-  function irAContacto(nombreProducto) {
-    setFormData((prev) => ({
-      ...prev,
-      comentario: nombreProducto ? `Quiero cotizar ${nombreProducto}` : prev.comentario,
-    }));
+  function abrirModalCotizar(producto) {
+    setProductoCotizando(producto);
+    setIndiceImagenCotizar(0);
+    setFormCotizar({
+      nombre: "",
+      correo: "",
+      telefono: "",
+      descripcion: producto?.nombre ? `Quiero cotizar ${producto.nombre}` : "",
+      cantidad: 1,
+    });
+    setImagenesAdjuntas([]);
+    setMensajeCotizacion("");
+    setErrorCotizacion("");
+    setModalCotizarAbierta(true);
+  }
 
-    const seccion = document.getElementById("contacto");
-    if (seccion) {
-      seccion.scrollIntoView({ behavior: "smooth", block: "start" });
+  function cerrarModalCotizar() {
+    setModalCotizarAbierta(false);
+    setProductoCotizando(null);
+    setIndiceImagenCotizar(0);
+    setFormCotizar({
+      nombre: "",
+      correo: "",
+      telefono: "",
+      descripcion: "",
+      cantidad: 1,
+    });
+    setImagenesAdjuntas([]);
+    setMensajeCotizacion("");
+    setErrorCotizacion("");
+  }
+
+  async function agregarArchivosCotizar(files) {
+    const LIMITE = 5;
+    const disponibles = LIMITE - imagenesAdjuntas.length;
+    if (disponibles <= 0) {
+      setErrorCotizacion(`Solo puedes subir hasta ${LIMITE} imagenes`);
+      return;
+    }
+    const lista = Array.from(files || []).slice(0, disponibles);
+    const nuevos = [];
+    for (const file of lista) {
+      const base64 = await toBase64(file);
+      nuevos.push({ preview: base64, nombre: file.name });
+    }
+    setImagenesAdjuntas((prev) => [...prev, ...nuevos]);
+  }
+
+  function eliminarImagenCotizacion(idx) {
+    setImagenesAdjuntas((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  function onDropCotizacion(e) {
+    e.preventDefault();
+    if (e.dataTransfer.files?.length) {
+      agregarArchivosCotizar(e.dataTransfer.files);
+    }
+  }
+
+  function onDragOverCotizacion(e) { e.preventDefault(); }
+
+  function siguienteImagenCotizar() {
+    if (!imagenesProductoCotizar.length) return;
+    setIndiceImagenCotizar((i) => (i + 1) % imagenesProductoCotizar.length);
+  }
+
+  function anteriorImagenCotizar() {
+    if (!imagenesProductoCotizar.length) return;
+    setIndiceImagenCotizar((i) => (i - 1 + imagenesProductoCotizar.length) % imagenesProductoCotizar.length);
+  }
+
+  async function enviarCotizacion(e) {
+    e.preventDefault();
+    try {
+      setEnviandoCotizacion(true);
+      setMensajeCotizacion("");
+      setErrorCotizacion("");
+      const endpoint = (API_URL ? `${API_URL}/api/cotizaciones` : "/api/cotizaciones");
+      const payload = {
+        producto_id: productoCotizando?.id ?? productoCotizando?.producto_id ?? null,
+        nombre_usuario: formCotizar.nombre.trim(),
+        correo: formCotizar.correo.trim(),
+        telefono: formCotizar.telefono.trim(),
+        descripcion: formCotizar.descripcion.trim(),
+        cantidad_solicitada: Number(formCotizar.cantidad) || 1,
+        producto_nombre_snap: productoCotizando?.nombre || productoCotizando?.titulo || null,
+        producto_precio_snap: productoCotizando?.precio_mxn ?? productoCotizando?.precio ?? productoCotizando?.costo ?? null,
+        producto_categoria_snap: normalizarCategoria(productoCotizando) || null,
+        producto_descripcion_snap: productoCotizando?.descripcion || null,
+        imagenes: imagenesAdjuntas.slice(0, 5).map((img) => img.preview),
+      };
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.message || "No se pudo enviar la cotizacion.");
+      }
+
+      setMensajeCotizacion(data?.message || "Cotizacion enviada. Pronto nos comunicaremos contigo.");
+      setFormCotizar((prev) => ({ ...prev, descripcion: "", cantidad: 1 }));
+    } catch (err) {
+      setErrorCotizacion(err?.message || "No se pudo enviar la cotizacion.");
+    } finally {
+      setEnviandoCotizacion(false);
     }
   }
 
@@ -158,6 +311,198 @@ export default function PrincipalHome() {
         </div>
       </section>
 
+      {modalCotizarAbierta && (
+        <div className="cotizar-overlay" onClick={cerrarModalCotizar}>
+          <div className="cotizar-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="cotizar-title">Cotizar producto</div>
+            <div className="cotizar-grid">
+              <div className="cotizar-col cotizar-col-left">
+                <div className="cotizar-left-panel">
+                  <div className="cotizar-left-content">
+                    <p className="cotizar-eyebrow">Detalles del producto</p>
+                    <p className="cotizar-categoria">
+                      {normalizarCategoria(productoCotizando) || "Producto"}
+                    </p>
+                    <div className="cotizar-image-card">
+                      <div className="cotizar-image-frame">
+                        {imagenesProductoCotizar.length > 0 ? (
+                          <img
+                            src={imagenesProductoCotizar[indiceImagenCotizar] || imgPlaceholder}
+                            alt="Producto"
+                          />
+                        ) : (
+                          <div className="cotizar-image-placeholder" />
+                        )}
+                        {imagenesProductoCotizar.length > 1 && (
+                          <>
+                            <button
+                              type="button"
+                              className="slider-btn-public left"
+                              onClick={anteriorImagenCotizar}
+                              aria-label="Anterior"
+                            >
+                              {"<"}
+                            </button>
+                            <button
+                              type="button"
+                              className="slider-btn-public right"
+                              onClick={siguienteImagenCotizar}
+                              aria-label="Siguiente"
+                            >
+                              {">"}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <h3 className="cotizar-titulo">
+                      {productoCotizando?.nombre || productoCotizando?.titulo || "Producto"}
+                    </h3>
+                    <p className="cotizar-descripcion">
+                      {productoCotizando?.descripcion || "Sin descripcion disponible."}
+                    </p>
+                    <div className="cotizar-precio">{precioProductoCotizar}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="cotizar-col cotizar-col-right">
+                <button className="cotizar-close" onClick={cerrarModalCotizar} aria-label="Cerrar">X</button>
+                <div className="cotizar-right-head">
+                  <p className="cotizar-eyebrow">Cotizar producto</p>
+                  <h3>Solicitud de cotizacion</h3>
+                  <p className="cotizar-note">
+                    Completa los campos para recibir una cotizacion personalizada del producto seleccionado.
+                  </p>
+                </div>
+
+                <form className="cotizar-form" onSubmit={enviarCotizacion}>
+                  <div className="cotizar-section">
+                    <h4>Detalles del cliente</h4>
+                    <label className="cotizar-field">
+                      <span>Nombre*</span>
+                      <input
+                        type="text"
+                        placeholder="Nombre completo"
+                        value={formCotizar.nombre}
+                        onChange={(e) => setFormCotizar({ ...formCotizar, nombre: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label className="cotizar-field">
+                      <span>Correo*</span>
+                      <input
+                        type="email"
+                        placeholder="correo@ejemplo.com"
+                        value={formCotizar.correo}
+                        onChange={(e) => setFormCotizar({ ...formCotizar, correo: e.target.value })}
+                        required
+                      />
+                    </label>
+                    <label className="cotizar-field">
+                      <span>Telefono*</span>
+                      <input
+                        type="tel"
+                        placeholder="(###) ####-####"
+                        value={formCotizar.telefono}
+                        onChange={(e) => setFormCotizar({ ...formCotizar, telefono: e.target.value })}
+                        required
+                      />
+                    </label>
+                  </div>
+
+                  <div className="cotizar-section">
+                    <h4>Detalles de la cotizacion</h4>
+                    <label className="cotizar-field">
+                      <span>Descripcion*</span>
+                      <textarea
+                        placeholder="Describe brevemente lo que necesitas o personalizaciones."
+                        value={formCotizar.descripcion}
+                        onChange={(e) => setFormCotizar({ ...formCotizar, descripcion: e.target.value })}
+                        rows={4}
+                        required
+                      />
+                    </label>
+
+                    <div className="cotizar-row">
+                      <label className="cotizar-field">
+                        <span>Cantidad</span>
+                        <input
+                          type="number"
+                          min="1"
+                          className="cotizar-input-short"
+                          value={formCotizar.cantidad}
+                          onChange={(e) => setFormCotizar({ ...formCotizar, cantidad: Number(e.target.value) || 1 })}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="cotizar-upload">
+                      <div className="cotizar-upload-row">
+                        <label className="btn-upload" htmlFor="cotizar-file">Seleccionar imagen</label>
+                        <input
+                          id="cotizar-file"
+                          className="hidden-input"
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={async (e) => {
+                            await agregarArchivosCotizar(e.target.files);
+                            e.target.value = "";
+                          }}
+                        />
+                        <span className="cotizar-upload-info">
+                          {imagenesAdjuntas.length > 0 ? `${imagenesAdjuntas.length} seleccionada(s)` : "Ninguna imagen seleccionada"}
+                        </span>
+                      </div>
+
+                      <div
+                        className="cotizar-dropzone"
+                        onDrop={onDropCotizacion}
+                        onDragOver={onDragOverCotizacion}
+                      >
+                        <div className="drop-plus-circle">+</div>
+                        <p>Arrastre y suelte la imagen</p>
+                        <small>Hasta 5 imagenes</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  {imagenesAdjuntas.length > 0 && (
+                    <div className="cotizar-preview-grid">
+                      {imagenesAdjuntas.map((img, idx) => (
+                        <div key={idx} className="cotizar-preview-card">
+                          <img src={img.preview} alt={`Imagen ${idx + 1}`} />
+                          <div className="cotizar-preview-footer">
+                            <span>{img.nombre || `Imagen ${idx + 1}`}</span>
+                            <button type="button" className="btn-mini-rojo" onClick={() => eliminarImagenCotizacion(idx)}>
+                              Eliminar
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {errorCotizacion && <div className="estado-productos estado-error">{errorCotizacion}</div>}
+                  {mensajeCotizacion && <div className="estado-productos">{mensajeCotizacion}</div>}
+
+                  <div className="cotizar-actions">
+                    <button type="button" className="btn-secundario" onClick={cerrarModalCotizar}>
+                      Cancelar
+                    </button>
+                    <button type="submit" className="btn-primario-cotizar" disabled={enviandoCotizacion}>
+                      {enviandoCotizacion ? "Enviando..." : "Cotizar"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Seccion de Contacto */}
       {/* Sección de Productos */}
       <section id="productos" className="productos-section">
         <div className="productos-header">
@@ -204,13 +549,13 @@ export default function PrincipalHome() {
             <PublicProductCard
               key={producto.id ?? producto.nombre}
               producto={producto}
-              onCotizar={() => irAContacto(producto.nombre)}
+              onCotizar={() => abrirModalCotizar(producto)}
             />
           ))}
         </div>
       </section>
 
-      {/* Sección de Contacto */}
+      {/* Seccion de Contacto */}
       <section id="contacto" className="contacto-section">
         <div className="contacto-contenedor">
           <div className="contacto-formulario">
@@ -388,3 +733,4 @@ function PublicProductCard({ producto, onCotizar }) {
     </article>
   );
 }
+
