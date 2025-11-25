@@ -1,68 +1,60 @@
+/*C:\UPQROO\FUREFAC PROYECTO\Frontend_furefac\src\administracion\ui\Cotizaciones.css*/
 .cotz-page {
   display: grid;
-  gap: 16px;
+  gap: 20px;
+  padding: 20px;
+  background: #f5f5f5;
 }
 
 .cotz-hero {
-  background: linear-gradient(135deg, #f44ba1, #6c5ff8 45%, #2fb3f1);
-  border-radius: 22px;
-  padding: 20px 22px;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
-}
-
-.cotz-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.14), transparent 30%),
-              radial-gradient(circle at 70% 30%, rgba(255,255,255,0.12), transparent 32%),
-              radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1), transparent 35%);
-}
-
-.cotz-hero-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
-  z-index: 1;
+  gap: 16px;
+  background: transparent;
+  padding: 0;
+}
+
+.cotz-hero::after {
+  display: none;
+}
+
+.cotz-hero-top {
+  display: contents;
 }
 
 .cotz-title {
-  font-size: clamp(1.6rem, 2vw + 1rem, 2.2rem);
-  font-weight: 900;
-  letter-spacing: 0.5px;
-  margin: 0;
+  display: none;
 }
 
 .cotz-actions {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto;
 }
 
 .cotz-btn-new {
   border: none;
-  background: linear-gradient(135deg, #39e2a0, #2dbc88);
-  color: #0b1c33;
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-weight: 800;
-  box-shadow: 0 10px 22px rgba(45, 188, 136, 0.3);
-  cursor: button;
+  background: #7ed957;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(126, 217, 87, 0.3);
 }
 
 .cotz-search {
-  background: #f5f7fb;
-  border-radius: 999px;
-  padding: 6px 10px;
+  background: #dedede;
+  border-radius: 20px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #d5ddeb;
-  min-width: 220px;
+  border: 1px solid #e0e0e0;
+  min-width: 250px;
 }
 
 .cotz-search input {
@@ -70,28 +62,25 @@
   outline: none;
   background: transparent;
   flex: 1;
+  font-size: 14px;
 }
 
 .cotz-toolbar {
   display: flex;
   gap: 10px;
   align-items: center;
-  position: relative;
-  z-index: 1;
 }
 
 .cotz-filter {
   border: none;
-  background: #c27a00;
+  background: #b056ff;
   color: #fff;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-weight: 800;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 8px 18px rgba(194, 122, 0, 0.32);
+  box-shadow: 0 2px 8px rgba(255, 157, 0, 0.3);
 }
 
 .cotz-list {
@@ -100,130 +89,506 @@
 }
 
 .cotz-card {
-  background: linear-gradient(135deg, #1780b7, #0f304d);
-  border-radius: 20px;
-  color: #e8f2ff;
+  background: linear-gradient(135deg, #118fbd, #154861);
+  border-radius: 24px;
+  color: #fff;
   display: grid;
-  grid-template-columns: 110px 1fr 140px;
-  min-height: 120px;
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.18);
-  overflow: hidden;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  padding: 16px 20px;
+  align-items: center;
+  box-shadow: 0 7px 12px rgba(0, 0, 0, 0.911);
   position: relative;
+  min-height: 100px;
 }
 
 .cotz-thumb {
-  background: linear-gradient(160deg, #4ad3ff, #1b6fa0);
-  display: grid;
-  place-items: center;
-  padding: 12px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .cotz-thumb img {
-  width: 74px;
-  height: 74px;
+  width: 90px;
+  height: 90px;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 50%;
   background: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+  border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
 .cotz-body {
-  padding: 14px 16px;
-  display: grid;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-content: center;
 }
 
 .cotz-desc-row {
   display: flex;
-  gap: 10px;
+  gap: 16px;
   align-items: flex-start;
+  justify-content: space-between;
 }
 
 .cotz-desc {
   margin: 0;
-  line-height: 1.4;
-  font-size: 0.95rem;
+  line-height: 1.5;
+  font-size: 16px;
   flex: 1;
+  font-weight: 400;
 }
 
 .cotz-date {
   text-align: center;
-  background: rgba(255,255,255,0.12);
-  padding: 6px 10px;
-  border-radius: 10px;
-  min-width: 70px;
-  font-weight: 800;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 12px;
+  border-radius: 12px;
+  min-width: 60px;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  line-height: 1.3;
 }
 
 .cotz-date-day {
-  font-size: 1.2rem;
-}
-
-.cotz-avatar {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: #0f1d32;
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.22);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 2px 0;
 }
 
 .cotz-right {
-  padding: 12px 14px;
-  display: grid;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-content: center;
-  justify-items: end;
+  align-items: flex-end;
 }
 
 .cotz-user {
   text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: flex-end;
 }
 
 .cotz-user strong {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.cotz-user strong::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: #ffc107;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.cotz-user[data-estado="pendiente"] strong::after {
+  background: #ffc107;
+}
+
+.cotz-user[data-estado="en_seguimiento"] strong::after {
+  background: #2196f3;
+}
+
+.cotz-user[data-estado="no_comprado"] strong::after {
+  background: #f44336;
+}
+
+.cotz-user[data-estado="comprado"] strong::after {
+  background: #4caf50;
+}
+
+.cotz-user small {
+  font-size: 12px;
+  opacity: 0.9;
+  line-height: 1.2;
+}
+
+.cotz-actions-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
 }
 
 .cotz-chips {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  align-items: center;
 }
 
 .cotz-chip-img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid #fff;
-  background: #0f1d32;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  overflow: visible;
+  border: 3px solid rgba(255, 255, 255, 0.072);
+  background: #ffffff54;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cotz-chip-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
 }
+
+.cotz-chip-img:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.651);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cotz-chip-img:focus-visible {
+  outline: 3px solid #7bb9ff;
+  outline-offset: 2px;
+}
+
+/* Tooltip de descarga - ahora arriba de la imagen */
+.cotz-chip-download {
+  position: absolute;
+  bottom: 85%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: #0f172a;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 60;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cotz-chip-download:hover {
+  background: #1e293b;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+/* Flecha del tooltip apuntando hacia abajo */
+.cotz-chip-download::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #0f172a;
+}
+
+.cotz-chip-img:hover .cotz-chip-download,
+.cotz-chip-img:focus-within .cotz-chip-download {
+  opacity: 1;
+  pointer-events: auto;
+}.cotz-chips--many .cotz-chip-img {
+  width: 38px;
+  height: 38px;
+  border-width: 1.5px;
+}
+
+.cotz-chips--many .cotz-chip-download {
+  font-size: 11px;
+  bottom: 28px;
+}
+
+.cotz-chips--many .cotz-chip-download-btn {
+  font-size: 10px;
+  padding: 5px 8px;
+}
+
+
+/* Botón de descarga alternativo */
+.cotz-chip-download-btn {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, -12px);
+  background: linear-gradient(135deg, #6c5ff8 0%, #5046e5 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  box-shadow: 0 4px 12px rgba(108, 95, 248, 0.3);
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.cotz-chip-img:hover .cotz-chip-download-btn,
+.cotz-chip-img:focus-within .cotz-chip-download-btn {
+  opacity: 1;
+  transform: translate(-50%, -12px);
+  pointer-events: auto;
+}
+
+.cotz-chip-download-btn:hover {
+  background: linear-gradient(135deg, #5046e5 0%, #4039d0 100%);
+  transform: translate(-50%, -14px);
+}
+
 
 .cotz-menu-btn {
   border: none;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
   color: #fff;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.cotz-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.cotz-menu-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.cotz-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  z-index: 100;
+  overflow: visible;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cotz-menu-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #333;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s ease;
+  position: relative;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.cotz-menu-item:hover {
+  background: #dedede;
+}
+
+.cotz-menu-item.has-submenu {
+  position: relative;
+}
+
+.cotz-menu-item.has-submenu::after {
+  content: "›";
+  margin-left: auto;
+  font-size: 16px;
+  opacity: 0.6;
+  font-weight: 600;
+}
+
+.cotz-submenu {
+  position: absolute;
+  right: 100%;
+  left: auto;
+  top: -8px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  margin-right: 8px;
+  overflow: hidden;
+  padding: 8px;
+  display: none;
+  z-index: 110;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cotz-menu-item.has-submenu:hover .cotz-submenu,
+.cotz-menu-item.has-submenu:focus-within .cotz-submenu,
+.cotz-submenu.visible {
+  display: block;
+}
+
+.cotz-menu-item.pendiente::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: #ffc107;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+}
+
+.cotz-menu-item.seguimiento::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: #2196f3;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+}
+
+.cotz-menu-item.no-comprado::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: #f44336;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2);
+}
+
+.cotz-menu-item.comprado::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: #4caf50;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.estado {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+}
+
+.estado.error {
+  color: #d32f2f;
 }
 
 @media (max-width: 900px) {
-  .cotz-card {
-    grid-template-columns: 100px 1fr;
+  .cotz-hero {
+    flex-wrap: wrap;
   }
+  
+  .cotz-toolbar {
+    width: 100%;
+    order: -1;
+  }
+  
+  .cotz-actions {
+    flex: 1;
+  }
+  
+  .cotz-search {
+    flex: 1;
+  }
+  
+  .cotz-card {
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  
   .cotz-right {
     grid-column: 1 / -1;
-    justify-items: start;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .cotz-user {
+    text-align: left;
+    align-items: flex-start;
+  }
+  
+  .cotz-actions-row {
+    margin-top: 0;
   }
 }
+
+@media (max-width: 600px) {
+  .cotz-page {
+    padding: 12px;
+  }
+  
+  .cotz-actions {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+  }
+  
+  .cotz-btn-new,
+  .cotz-search {
+    width: 100%;
+  }
+  
+  .cotz-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .cotz-thumb {
+    justify-content: flex-start;
+  }
+  
+  .cotz-desc-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .cotz-date {
+    align-self: flex-start;
+  }
+  
+  .cotz-right {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .cotz-user {
+    width: 100%;
+  }
+  
+  .cotz-actions-row {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+

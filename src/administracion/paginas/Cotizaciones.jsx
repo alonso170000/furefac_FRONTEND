@@ -1,3 +1,4 @@
+//C:\UPQROO\FUREFAC PROYECTO\Frontend_furefac\src\administracion\paginas\Cotizaciones.jsx
 import { useEffect, useMemo, useState } from "react";
 import "./../ui/Cotizaciones.css";
 import {
@@ -81,8 +82,14 @@ export default function Cotizaciones() {
   return (
     <div className="cotz-page">
       <div className="cotz-hero">
+        <div className="cotz-toolbar">
+          <select className="cotz-filter" value={estado} onChange={(e) => setEstado(e.target.value)}>
+            {ESTADOS.map((op) => (
+              <option key={op.value} value={op.value}>{op.label}</option>
+            ))}
+          </select>
+        </div>
         <div className="cotz-hero-top">
-          <h2 className="cotz-title">Cotizaciones</h2>
           <div className="cotz-actions">
             <button className="cotz-btn-new">Nuevo +</button>
             <div className="cotz-search">
@@ -95,13 +102,6 @@ export default function Cotizaciones() {
               />
             </div>
           </div>
-        </div>
-        <div className="cotz-toolbar">
-          <select className="cotz-filter" value={estado} onChange={(e) => setEstado(e.target.value)}>
-            {ESTADOS.map((op) => (
-              <option key={op.value} value={op.value}>{op.label}</option>
-            ))}
-          </select>
         </div>
       </div>
 
@@ -116,6 +116,7 @@ export default function Cotizaciones() {
               data={c}
               imagenes={imagenesMap[c.id] || []}
               productoImagen={productoImagenMap[c.id]}
+              onRefresh={cargar}
             />
           ))}
           {filtradas.length === 0 && <div className="estado">Sin cotizaciones</div>}
@@ -125,13 +126,63 @@ export default function Cotizaciones() {
   );
 }
 
-function CotizacionCard({ data, imagenes = [], productoImagen }) {
-  const iniciales = (data?.nombre_usuario || "U").split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase();
+function CotizacionCard({ data, imagenes = [], productoImagen, onRefresh }) {
+  const [menuAbierto, setMenuAbierto] = useState(false);
+  const [submenuAbierto, setSubmenuAbierto] = useState(false);
+  const [chipHover, setChipHover] = useState(null);
+  const [estadoActual, setEstadoActual] = useState(data?.estado || "pendiente");
+  
   const fecha = data?.creado_en ? new Date(data.creado_en) : null;
   const mes = fecha ? fecha.toLocaleString("es-MX", { month: "short" }).toUpperCase() : "";
   const dia = fecha ? fecha.getDate() : "";
   const anio = fecha ? fecha.getFullYear() : "";
   const thumb = productoImagen || data?.imagen_portada || (data?.imagenes?.[0]) || "https://via.placeholder.com/120";
+
+  useEffect(() => {
+    setEstadoActual(data?.estado || "pendiente");
+  }, [data?.estado]);
+
+  async function cambiarEstado(nuevoEstado) {
+    try {
+      setEstadoActual(nuevoEstado);
+      await cambiarEstadoCotizacion(data.id, nuevoEstado);
+      setMenuAbierto(false);
+      setSubmenuAbierto(false);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      console.error("Error al cambiar estado:", error);
+    }
+  }
+
+  async function registrarCompraHandler() {
+    try {
+      await registrarCompra(data.id);
+      setMenuAbierto(false);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      console.error("Error al registrar compra:", error);
+    }
+  }
+
+  function descargarImagen(url, index) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `cotizacion-${data.id}-imagen-${index + 1}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuAbierto && !e.target.closest('.cotz-menu-btn') && !e.target.closest('.cotz-menu-dropdown')) {
+        setMenuAbierto(false);
+        setSubmenuAbierto(false);
+      }
+    }
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [menuAbierto]);
 
   return (
     <article className="cotz-card">
@@ -149,18 +200,104 @@ function CotizacionCard({ data, imagenes = [], productoImagen }) {
         </div>
       </div>
       <div className="cotz-right">
-        <div className="cotz-user">
+        <div className="cotz-user" data-estado={estadoActual}>
           <strong>{data?.nombre_usuario}</strong>
-          <small>{data?.telefono}</small><br />
+          <small>{data?.telefono}</small>
           <small>{data?.correo}</small>
         </div>
-        <div className="cotz-chips">
-          {imagenes.slice(0, 2).map((img, idx) => (
-            <span key={idx} className="cotz-chip-img"><img src={img} alt={`img-${idx}`} /></span>
-          ))}
+        <div className="cotz-actions-row">
+
+          <div className={`cotz-chips ${imagenes.length > 2 ? "cotz-chips--many" : ""}`}>
+            {imagenes.map((img, idx) => (
+
+              <span
+                key={idx}
+                className="cotz-chip-img"
+                onMouseEnter={() => setChipHover(idx)}
+                onMouseLeave={() => setChipHover(null)}
+                onFocus={() => setChipHover(idx)}
+                onBlur={() => setChipHover(null)}
+                tabIndex={0}
+              >
+                <img src={img} alt={`img-${idx}`} />
+
+                {chipHover === idx && (
+
+                  <div
+
+                    className="cotz-chip-download"
+
+                    onClick={() => descargarImagen(img, idx)}
+
+                  >
+
+                    Descargar
+
+                  </div>
+
+                )}
+
+                
+
+              </span>
+
+            ))}
+
+          </div>
+
+          <button
+            className="cotz-menu-btn"
+            onClick={() => setMenuAbierto(!menuAbierto)}
+            onMouseEnter={() => setMenuAbierto(true)}
+          >
+            ...
+          </button>
+
+          {menuAbierto && (
+            <div className="cotz-menu-dropdown">
+              <button 
+                className="cotz-menu-item"
+                onClick={() => registrarCompraHandler()}
+              >
+                Registrar compra
+              </button>
+              <button 
+                className="cotz-menu-item has-submenu"
+                onMouseEnter={() => setSubmenuAbierto(true)}
+                onFocus={() => setSubmenuAbierto(true)}
+                onBlur={() => setSubmenuAbierto(false)}
+              >
+                Cambiar estado
+                <div
+                  className={`cotz-submenu ${submenuAbierto ? "visible" : ""}`}
+                  onMouseEnter={() => setSubmenuAbierto(true)}
+                  onMouseLeave={() => setSubmenuAbierto(false)}
+                >
+                  <button 
+                    className="cotz-menu-item pendiente"
+                    onClick={() => cambiarEstado("pendiente")}
+                  >
+                    Pendiente
+                  </button>
+                  <button 
+                    className="cotz-menu-item seguimiento"
+                    onClick={() => cambiarEstado("en_seguimiento")}
+                  >
+                    En seguimiento
+                  </button>
+                  <button 
+                    className="cotz-menu-item no-comprado"
+                    onClick={() => cambiarEstado("no_comprado")}
+                  >
+                    No comprado
+                  </button>
+                </div>
+              </button>
+            </div>
+          )}
         </div>
-        <button className="cotz-menu-btn">⋯</button>
       </div>
     </article>
   );
 }
+
