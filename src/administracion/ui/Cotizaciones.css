@@ -542,6 +542,609 @@
   }
 }
 
+.cotz-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 24, 0.62);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 2400;
+}
+
+.cotz-modal-shell {
+  position: relative;
+  width: min(1180px, 96vw);
+  max-height: 94vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff2fa3 0%, #7a2fd6 45%, #1698d6 100%);
+  border-radius: 26px;
+  padding: 26px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+  color: #f7f9ff;
+}
+
+.cotz-modal-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 82% 12%, rgba(255, 255, 255, 0.18), transparent 26%),
+    radial-gradient(circle at 50% 90%, rgba(0, 0, 0, 0.22), transparent 46%);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.cotz-modal-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+}
+
+.cotz-modal-title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(22px, 2.6vw, 34px);
+  letter-spacing: 0.4px;
+  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.cotz-modal-close {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+.cotz-modal-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px) scale(1.02);
+}
+
+.cotz-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 16px;
+  align-items: stretch;
+  max-height: calc(94vh - 120px);
+  padding-right: 4px;
+  overflow-y: auto;
+  -webkit-scrollbar: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.cotz-modal-panel {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.cotz-panel-producto {
+  min-height: 460px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.18));
+}
+
+.cotz-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cotz-panel-kicker {
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+}
+
+.cotz-panel-selects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cotz-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f7f9ff;
+}
+
+.cotz-field span {
+  opacity: 0.92;
+}
+
+.cotz-input,
+.cotz-textarea {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f1d2f;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  transition: all 0.2s ease;
+}
+
+.cotz-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.cotz-input:focus,
+.cotz-textarea:focus {
+  outline: 2px solid #ffc6ff;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+}
+
+.cotz-product-visor {
+  margin-top: 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.22));
+  border-radius: 18px;
+  padding: 14px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.cotz-product-visor-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.cotz-product-visual {
+  width: 120px;
+  height: 120px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.16);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+}
+
+.cotz-product-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cotz-product-icon {
+  font-size: 42px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.cotz-product-copy h4 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+.cotz-product-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.cotz-product-meta span {
+  background: rgba(255, 255, 255, 0.16);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cotz-product-description {
+  margin: 0;
+  line-height: 1.5;
+  color: #e9edff;
+  opacity: 0.9;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.cotz-product-placeholder {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 1px;
+  color: #ffffff;
+  opacity: 0.5;
+}
+
+.cotz-product-placeholder svg {
+  font-size: 200px;
+  opacity: 0.4;
+  stroke-width: 1.4px;
+}
+
+.cotz-panel-form {
+  background: rgba(255, 255, 255, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cotz-form-section h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.cotz-two-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cotz-upload-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cotz-btn-secondary,
+.cotz-btn-primary {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.cotz-btn-secondary {
+  background: rgba(255, 255, 255, 0.18);
+  color: #f7f9ff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.cotz-btn-primary {
+  background: #0f74c7;
+  color: #f5f9ff;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+}
+
+.cotz-btn-primary:hover {
+  background: #0c64ac;
+  transform: translateY(-1px);
+}
+
+.cotz-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.26);
+  transform: translateY(-1px);
+}
+
+.cotz-btn-primary:disabled,
+.cotz-btn-secondary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cotz-upload-area {
+  margin-top: 8px;
+  border: 2px dashed rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  padding: 18px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e9edff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cotz-upload-area:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #fff;
+}
+
+.cotz-upload-area-inner {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.cotz-upload-area svg {
+  font-size: 28px;
+}
+
+.cotz-upload-plus {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  margin-top: 4px;
+}
+
+.cotz-upload-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.cotz-upload-thumb {
+  width: 92px;
+  height: 92px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28);
+}
+
+.cotz-upload-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cotz-upload-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(12, 16, 34, 0.85);
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+}
+
+.cotz-modal-error {
+  background: rgba(255, 0, 90, 0.2);
+  color: #ffe9f1;
+  border: 1px solid rgba(255, 0, 90, 0.4);
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.cotz-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.cotz-pill {
+  background: rgba(255, 255, 255, 0.26);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+@media (max-width: 1100px) {
+  .cotz-modal-shell {
+    padding: 20px;
+  }
+  .cotz-modal-grid {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+  .cotz-panel-producto {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 720px) {
+  .cotz-modal-overlay {
+    padding: 10px;
+  }
+  .cotz-panel-selects,
+  .cotz-two-cols {
+    grid-template-columns: 1fr;
+  }
+  .cotz-modal-close {
+    top: 10px;
+    right: 10px;
+  }
+  .cotz-product-visual {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+.compra-modal-shell {
+  position: relative;
+  width: min(1160px, 96vw);
+  max-height: 94vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff2fa3 0%, #7a2fd6 45%, #1698d6 100%);
+  border-radius: 26px;
+  padding: 26px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+  color: #f7f9ff;
+}
+
+.compra-modal-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 80% 12%, rgba(255, 255, 255, 0.14), transparent 26%),
+    radial-gradient(circle at 60% 90%, rgba(0, 0, 0, 0.18), transparent 42%);
+  pointer-events: none;
+}
+
+.compra-modal-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+}
+
+.compra-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 16px;
+  align-items: stretch;
+  max-height: calc(94vh - 120px);
+  overflow-y: auto;
+  -webkit-scrollbar: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.compra-panel {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.compra-panel-left {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.16));
+}
+
+.compra-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compra-section h4,
+.compra-panel-compra h4 {
+  margin: 0 0 4px;
+}
+
+.compra-section-producto .cotz-textarea {
+  min-height: 120px;
+}
+
+.compra-panel-compra {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.compra-check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 700;
+  color: #f7f9ff;
+  margin-top: 4px;
+}
+
+.compra-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: #c34cff;
+}
+
+.compra-total {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.compra-total strong {
+  font-size: 22px;
+}
+
+.compra-confirm-overlay {
+  z-index: 2600;
+}
+
+.compra-confirm-card {
+  position: relative;
+  background: #0f172a;
+  color: #f7f9ff;
+  padding: 24px;
+  border-radius: 16px;
+  width: min(420px, 92vw);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+.compra-confirm-card .cotz-modal-close {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.compra-confirm-body {
+  display: grid;
+  gap: 12px;
+  text-align: center;
+}
+
+.compra-confirm-icon {
+  font-size: 46px;
+  color: #ffcc00;
+  display: grid;
+  place-items: center;
+}
+
+.compra-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+@media (max-width: 1100px) {
+  .compra-modal-shell {
+    padding: 20px;
+  }
+  .compra-modal-grid {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .compra-modal-shell {
+    padding: 16px;
+  }
+}
+
 @media (max-width: 600px) {
   .cotz-page {
     padding: 12px;
@@ -590,5 +1193,3 @@
     justify-content: space-between;
   }
 }
-
-

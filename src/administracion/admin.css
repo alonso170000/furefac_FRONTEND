@@ -344,7 +344,7 @@ body {
 
 .admin-main {
   position: relative;
-  z-index: 1;
+  z-index: auto;
   margin-top: calc(var(--header-height) - 170px);
   padding: 0 34px 48px calc(var(--sidebar-width) + var(--sidebar-gap));
 }
