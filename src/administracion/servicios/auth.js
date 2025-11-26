@@ -31,9 +31,9 @@ export function leerUsuario() {
 }
 
 /**
- * Inicia sesi�n contra tu backend real.
- * Recibe { identificador, contrasena } (espa�ol en UI),
- * pero env�a { usuario, password } como exige el backend.
+ * Inicia sesión contra tu backend real.
+ * Recibe { identificador, contrasena } (español en UI),
+ * pero envía { usuario, password } como exige el backend.
  */
 export async function iniciarSesion({ identificador, contrasena }) {
   const url = `${import.meta.env.VITE_API_URL}/api/auth/login`;
@@ -51,7 +51,7 @@ export async function iniciarSesion({ identificador, contrasena }) {
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok || !data?.token) {
-    return { ok: false, mensaje: data?.message || "Usuario/contrase�a inv�lidos" };
+    return { ok: false, mensaje: data?.message || "Usuario/contraseña inválidos" };
   }
 
   guardarToken(data.token);
@@ -69,4 +69,13 @@ export async function fetchAutenticado(ruta, opciones = {}) {
   };
   const res = await fetch(`${import.meta.env.VITE_API_URL}${ruta}`, { ...opciones, headers });
   return res;
+}
+
+/**
+ * Hook para obtener el usuario actual
+ * Compatible con el sistema de claves personalizado (usuario_furefac)
+ */
+export function useAuth() {
+  const usuario = leerUsuario(); // Usa la función existente
+  return { usuario };
 }
