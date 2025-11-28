@@ -1,0 +1,452 @@
+.hist-page {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.hist-hero {
+  border-radius: 18px;
+  padding: 0px 10px 10px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+}
+
+.hist-search {
+  background: #f7f7f7;
+  border-radius: 16px;
+  border-color: none;
+  padding: 8px 19px;
+  min-width: 280px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.078), 0 7px 5px rgba(0, 0, 0, 0.1);
+}
+
+.hist-search input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  background: #f7f7f7;
+}
+
+.hist-card {
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+  padding: 12px;
+}
+
+.hist-table-wrap {
+  overflow-x: auto;
+}
+
+.hist-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+  color: #1f2937;
+}
+
+.hist-table th,
+.hist-table td {
+  padding: 12px 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.hist-table th {
+  background: #ff1493;
+  color: #fff;
+  font-weight: 800;
+  text-align: left;
+}
+
+.hist-table th:first-child {
+  border-top-left-radius: 14px;
+}
+.hist-table th:last-child {
+  border-top-right-radius: 14px;
+}
+
+.hist-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 14px;
+}
+.hist-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 14px;
+}
+
+.hist-empty {
+  text-align: center;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.hist-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.hist-th-acciones {
+  min-width: 200px;
+}
+
+.hist-actions {
+  display: grid;
+  gap: 6px;
+}
+
+.hist-pill {
+  border: none;
+  border-radius: 16px;
+  padding: 8px 10px;
+  font-weight: 700;
+  color: #0f172a;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.hist-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+.hist-pill-yellow {
+  background: #ffe066;
+}
+.hist-pill-green {
+  background: #82e4aa;
+}
+.hist-pill-blue {
+  background: #a6d9ff;
+}
+
+@media (max-width: 900px) {
+  .hist-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .hist-search {
+    width: 100%;
+  }
+}
+
+.hist-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 24, 0.62);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 2400;
+}
+
+.hist-modal-shell {
+  position: relative;
+  width: min(1160px, 96vw);
+  max-height: 94vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff2fa3 0%, #7a2fd6 45%, #1698d6 100%);
+  border-radius: 26px;
+  padding: 26px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+  color: #f7f9ff;
+}
+
+.hist-modal-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 80% 12%, rgba(255, 255, 255, 0.14), transparent 26%),
+    radial-gradient(circle at 60% 90%, rgba(0, 0, 0, 0.18), transparent 42%);
+  pointer-events: none;
+}
+
+.hist-modal-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.hist-modal-title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(22px, 2.6vw, 34px);
+  letter-spacing: 0.4px;
+  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.hist-modal-close {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+.hist-modal-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px) scale(1.02);
+}
+
+.hist-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 16px;
+  align-items: stretch;
+  max-height: calc(94vh - 120px);
+  overflow-y: auto;
+  
+}
+
+.hist-modal-grid::-webkit-scrollbar {
+  width: 8px; /* ancho de la barra vertical */
+  height: 10px; /* alto de la barra horizontal */
+}
+
+.hist-modal-grid::-webkit-scrollbar-track {
+  background: #ffffff1e; /* color de la pista/fondo */
+  border-radius: 100px;
+  border-color: #ffffff;
+}
+
+.hist-modal-grid::-webkit-scrollbar-thumb {
+  background: #ffffff6b; /* color del pulgar */
+  border-radius: 10px;
+  border-color: #ffffff;
+}
+
+.hist-modal-panel {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hist-panel-left {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.16));
+}
+
+.hist-panel-right {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.hist-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hist-modal-section h4,
+.hist-panel-right h4 {
+  margin: 0 0 4px;
+}
+
+.hist-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f7f9ff;
+}
+
+.hist-input,
+.hist-textarea {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f1d2f;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.hist-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.hist-two-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 1100px) {
+  .hist-modal-shell {
+    padding: 20px;
+  }
+  .hist-modal-grid {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .hist-modal-shell {
+    padding: 16px;
+  }
+  .hist-two-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hist-recibo-shell {
+  width: min(840px, 96vw);
+  overflow-y: auto;
+  -webkit-scrollbar: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hist-recibo-frame {
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  overflow-y: auto;
+  
+}
+
+.hist-recibo-paper {
+  width: min(600px, 90vw);
+  background: #fff;
+  color: #0f172a;
+  padding: 20px 22px;
+  border-radius: 12px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+  overflow-y: auto;
+}
+
+.hist-recibo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.hist-recibo-logo {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.hist-recibo-logo-img {
+  width: 120px;
+  height: auto;
+  border-radius: 10px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.hist-recibo-logo-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hist-recibo-folio {
+  text-align: right;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hist-recibo-title {
+  text-align: center;
+  margin: 10px 0 12px;
+  color: #1f7cd8;
+  font-size: 20px;
+}
+
+.hist-recibo-cliente {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.hist-recibo-cliente-label {
+  color: #1f7cd8;
+  font-weight: 800;
+}
+
+.hist-recibo-cliente-datos {
+  display: grid;
+  gap: 3px;
+  font-size: 12px;
+}
+
+.hist-recibo-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 12px;
+  font-size: 12px;
+}
+
+.hist-recibo-table th,
+.hist-recibo-table td {
+  border: 1px solid #cbd5e1;
+  padding: 6px;
+}
+
+.hist-recibo-table th {
+  background: #f1f5f9;
+  text-align: left;
+}
+
+.hist-recibo-num {
+  text-align: right;
+}
+
+.hist-recibo-pago {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.hist-recibo-footer {
+  margin-top: 300px;
+  text-align: center;
+  font-size: 11px;
+  color: #111827;
+  display: grid;
+  gap: 6px;
+}
+
+.hist-recibo-legal {
+  font-size: 10px;
+}
+
+.hist-recibo-actions {
+  display: flex;
+  justify-content: flex-end;
+}

@@ -28,7 +28,7 @@ export async function crearCotizacion(payload) {
     body: JSON.stringify(payload),
   });
   const data = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(data?.message || "No se pudo crear la cotización");
+  if (!res.ok) throw new Error(data?.message || "No se pudo crear la cotizaci\u00f3n");
   return data;
 }
 
@@ -45,6 +45,13 @@ export async function registrarCompra(payload) {
 export async function obtenerImagenesCotizacion(id) {
   const res = await fetchAutenticado(`/api/cotizaciones/${id}/imagenes`);
   const data = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(data?.message || "No se pudieron cargar las imágenes");
+  if (!res.ok) throw new Error(data?.message || "No se pudieron cargar las im\u00e1genes");
   return Array.isArray(data) ? data : [];
+}
+
+export async function obtenerCotizacion(id) {
+  const res = await fetchAutenticado(`/api/cotizaciones/${id}`);
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(data?.message || "No se pudo cargar la cotizaci\u00f3n");
+  return data;
 }
