@@ -31,7 +31,7 @@ const enlacesBuzon = [
 ];
 
 const enlacesConfig = [
-  { to: "/administracion/configuracion/contactos", label: "Contactos", icon: FiSettings },
+  { to: "/administracion/contactos", label: "Contactos", icon: FiSettings }, // ← CORREGIDO: era /configuracion/contactos
 ];
 
 function obtenerIniciales(nombre) {

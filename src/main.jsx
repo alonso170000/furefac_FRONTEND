@@ -13,6 +13,7 @@ import Panel from "./administracion/paginas/Panel.jsx";
 import Productos from "./administracion/paginas/Productos.jsx";
 import Usuarios from "./administracion/paginas/Usuarios.jsx";
 import Cotizaciones from "./administracion/paginas/Cotizaciones.jsx";
+import Contactos from "./administracion/paginas/Contactos.jsx";
 
 // PÚBLICO
 import PrincipalHome from "./principal/Home.jsx";
@@ -45,7 +46,8 @@ const router = createBrowserRouter([
           { path: "panel", element: <Panel /> },             // /administracion/panel
           { path: "productos", element: <Productos /> },     // /administracion/productos
           { path: "usuarios", element: <Usuarios /> },       // /administracion/usuarios
-          { path: "buzon/cotizaciones", element: <Cotizaciones /> },
+          { path: "contactos", element: <Contactos /> },   // /administracion/contactos
+          { path: "buzon/cotizaciones", element: <Cotizaciones /> }, // /administracion/buzon/cotizaciones
         ],
       },
     ],
