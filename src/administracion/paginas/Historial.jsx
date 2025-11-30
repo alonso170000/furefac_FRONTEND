@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./../ui/Historial.css";
-import { listarHistorial, obtenerDetalleHistorial } from "../servicios/historial";
+import { listarHistorial, obtenerDetalleHistorial, reenviarReciboHistorial } from "../servicios/historial";
 import { obtenerCotizacion } from "../servicios/cotizaciones";
 import { FiX } from "react-icons/fi";
-import { useRef } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import logoFundacion from "../../assets/logo-fundacion.png";
@@ -21,7 +20,12 @@ export default function Historial() {
   const [reciboDetalle, setReciboDetalle] = useState(null);
   const [cargandoRecibo, setCargandoRecibo] = useState(false);
   const [errorRecibo, setErrorRecibo] = useState("");
+  const [reenviandoId, setReenviandoId] = useState(null);
+  const [mensajeReenvio, setMensajeReenvio] = useState("");
+  const [toast, setToast] = useState({ msg: "", type: "" });
+  const toastTimeout = useRef(null);
   const reciboRef = useRef(null);
+  const reciboHiddenRef = useRef(null);
 
   useEffect(() => {
     cargar();
@@ -44,8 +48,8 @@ export default function Historial() {
   const filtrados = useMemo(() => {
     if (!q.trim()) return lista;
     const term = q.toLowerCase();
-    return lista.filter((item) => {
-      return [
+    return lista.filter((item) =>
+      [
         item.folio,
         item.cliente,
         item.producto,
@@ -54,8 +58,8 @@ export default function Historial() {
         item.usuario_apellido,
       ]
         .filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(term));
-    });
+        .some((v) => String(v).toLowerCase().includes(term))
+    );
   }, [lista, q]);
 
   function formatearFecha(fecha) {
@@ -71,41 +75,46 @@ export default function Historial() {
     return num.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  async function enriquecerDetalleConCotizacion(data) {
+    let precioOriginal = data?.producto_precio ?? null;
+    let categoriaOriginal = data?.producto_categoria ?? null;
+
+    if (data?.cotizacion_id) {
+      try {
+        const cot = await obtenerCotizacion(data.cotizacion_id);
+        const precioSnap =
+          cot?.producto_precio_snap ??
+          cot?.producto_precio ??
+          cot?.precio_mxn ??
+          cot?.precio ??
+          null;
+        const catSnap =
+          cot?.producto_categoria_snap ??
+          cot?.producto_categoria ??
+          cot?.categoria ??
+          null;
+        precioOriginal = precioOriginal ?? precioSnap;
+        categoriaOriginal = categoriaOriginal ?? catSnap;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    return {
+      ...data,
+      precio_original: precioOriginal,
+      producto_categoria_original: categoriaOriginal,
+    };
+  }
+
   async function verDetalles(item) {
     if (!item?.id) return;
     try {
       setCargandoDetalle(true);
       setErrorDetalle("");
       const data = await obtenerDetalleHistorial(item.id);
-      let precioOriginal = data?.producto_precio ?? null;
-      let categoriaOriginal = data?.producto_categoria ?? null;
-
-      if (data?.cotizacion_id) {
-        try {
-          const cot = await obtenerCotizacion(data.cotizacion_id);
-          const precioSnap =
-            cot?.producto_precio_snap ??
-            cot?.producto_precio ??
-            cot?.precio_mxn ??
-            cot?.precio ??
-            null;
-          const catSnap =
-            cot?.producto_categoria_snap ??
-            cot?.producto_categoria ??
-            cot?.categoria ??
-            null;
-          precioOriginal = precioOriginal ?? precioSnap;
-          categoriaOriginal = categoriaOriginal ?? catSnap;
-        } catch {
-          /* ignore error de cotizacion */
-        }
-      }
-
-      setDetalle({
-        ...data,
-        precio_original: precioOriginal,
-        producto_categoria_original: categoriaOriginal,
-      });
+      const enriquecido = await enriquecerDetalleConCotizacion(data);
+      setDetalle(enriquecido);
       setDetalleAbierto(true);
     } catch (err) {
       setErrorDetalle(err?.message || "No se pudo cargar el detalle");
@@ -121,35 +130,8 @@ export default function Historial() {
       setCargandoRecibo(true);
       setErrorRecibo("");
       const data = await obtenerDetalleHistorial(item.id);
-      let precioOriginal = data?.producto_precio ?? null;
-      let categoriaOriginal = data?.producto_categoria ?? null;
-
-      if (data?.cotizacion_id) {
-        try {
-          const cot = await obtenerCotizacion(data.cotizacion_id);
-          const precioSnap =
-            cot?.producto_precio_snap ??
-            cot?.producto_precio ??
-            cot?.precio_mxn ??
-            cot?.precio ??
-            null;
-          const catSnap =
-            cot?.producto_categoria_snap ??
-            cot?.producto_categoria ??
-            cot?.categoria ??
-            null;
-          precioOriginal = precioOriginal ?? precioSnap;
-          categoriaOriginal = categoriaOriginal ?? catSnap;
-        } catch {
-          /* ignore */
-        }
-      }
-
-      setReciboDetalle({
-        ...data,
-        precio_original: precioOriginal,
-        producto_categoria_original: categoriaOriginal,
-      });
+      const enriquecido = await enriquecerDetalleConCotizacion(data);
+      setReciboDetalle(enriquecido);
       setReciboAbierto(true);
     } catch (err) {
       setErrorRecibo(err?.message || "No se pudo cargar el recibo");
@@ -160,8 +142,58 @@ export default function Historial() {
   }
 
   function reenviarRecibo(item) {
-    window.alert(`Reenviar recibo pendiente para folio ${item.folio || "-"}.`);
-  } 
+    if (!item?.id) return;
+    setMensajeReenvio("");
+    setErrorRecibo("");
+    generarYEnviarRecibo(item.id);
+  }
+
+  function mostrarToast(msg, type = "ok") {
+    setToast({ msg, type });
+    if (toastTimeout.current) clearTimeout(toastTimeout.current);
+    toastTimeout.current = setTimeout(() => setToast({ msg: "", type: "" }), 5000);
+  }
+
+  async function generarYEnviarRecibo(id) {
+    try {
+      setReenviandoId(id);
+      mostrarToast("Enviando...", "info");
+      const data = await obtenerDetalleHistorial(id);
+      const detalle = await enriquecerDetalleConCotizacion(data);
+      setReciboDetalle(detalle);
+      const pdfBase64 = await generarPdfDesdeRecibo(detalle);
+      const correo = detalle?.cliente_correo || detalle?.correo || "";
+      await reenviarReciboHistorial(id, { pdfBase64, correo });
+      setMensajeReenvio("Recibo reenviado con éxito");
+      mostrarToast("Recibo reenviado con éxito", "ok");
+    } catch (err) {
+      setErrorRecibo(err?.message || "No se pudo reenviar el recibo");
+      mostrarToast(err?.message || "No se pudo reenviar el recibo", "error");
+    } finally {
+      setReenviandoId(null);
+    }
+  }
+
+  async function generarPdfDesdeRecibo(detalle) {
+    // Renderizar el recibo en un contenedor oculto para capturarlo
+    setReciboDetalle(detalle);
+    await new Promise((resolve) => setTimeout(resolve, 80));
+    const el = reciboHiddenRef.current || reciboRef.current;
+    if (!el) throw new Error("No se pudo generar el recibo");
+    const canvas = await html2canvas(el, { scale: 2, useCORS: true });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "pt", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgWidth = pageWidth - 40;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const marginTop = 20;
+    const marginBottom = 20;
+    const maxHeight = pdf.internal.pageSize.getHeight() - marginTop - marginBottom;
+    const finalHeight = Math.min(imgHeight, maxHeight);
+    pdf.addImage(imgData, "PNG", 20, marginTop, imgWidth, finalHeight);
+    const dataUri = pdf.output("datauristring");
+    return dataUri.includes(",") ? dataUri.split(",")[1] : dataUri;
+  }
 
   async function descargarRecibo() {
     if (!reciboRef.current) return;
@@ -225,15 +257,15 @@ export default function Historial() {
                   </tr>
                 )}
                 {filtrados.map((item) => (
-              <tr key={item.id ?? item.folio}>
-                <td>{item.folio || "-"}</td>
-                <td>{formatearFecha(item.fecha)}</td>
-                <td>{item.cliente || "-"}</td>
-                <td>{item.producto || "-"}</td>
-                <td className="hist-num">{item.cantidad ?? "-"}</td>
-                <td className="hist-num">{formatearMoneda(item.total)}</td>
-                <td>{item.metodo_pago || "-"}</td>
-                <td>{[item.usuario_nombre, item.usuario_apellido].filter(Boolean).join(" ") || "-"}</td>
+                  <tr key={item.id ?? item.folio}>
+                    <td>{item.folio || "-"}</td>
+                    <td>{formatearFecha(item.fecha)}</td>
+                    <td>{item.cliente || "-"}</td>
+                    <td>{item.producto || "-"}</td>
+                    <td className="hist-num">{item.cantidad ?? "-"}</td>
+                    <td className="hist-num">{formatearMoneda(item.total)}</td>
+                    <td>{item.metodo_pago || "-"}</td>
+                    <td>{[item.usuario_nombre, item.usuario_apellido].filter(Boolean).join(" ") || "-"}</td>
                     <td>
                       <div className="hist-actions">
                         <button className="hist-pill hist-pill-yellow" onClick={() => verDetalles(item)}>
@@ -242,7 +274,7 @@ export default function Historial() {
                         <button className="hist-pill hist-pill-green" onClick={() => verRecibo(item)}>
                           Ver recibo
                         </button>
-                        <button className="hist-pill hist-pill-blue" onClick={() => reenviarRecibo(item)}>
+                        <button className="hist-pill hist-pill-blue" onClick={() => reenviarRecibo(item)} disabled={reenviandoId === item.id}>
                           Reenviar recibo
                         </button>
                       </div>
@@ -449,13 +481,82 @@ export default function Historial() {
                   {errorRecibo && <div className="estado error">{errorRecibo}</div>}
                   <div className="hist-recibo-actions">
                     <button className="cotz-btn-primary" onClick={descargarRecibo} disabled={cargandoRecibo}>
-                      Descargar
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      {cargandoRecibo ? "Generando..." : "Descargar PDF"}
                     </button>
                   </div>
                 </>
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Recibo oculto para generar PDF al reenviar */}
+      <div style={{ position: "absolute", left: "-9999px", opacity: 0, pointerEvents: "none" }}>
+        <div className="hist-recibo-paper" ref={reciboHiddenRef}>
+          <div className="hist-recibo-header">
+            <div className="hist-recibo-logo">
+              <div className="hist-recibo-logo-img">
+                <img src={logoFundacion} alt="Logo fundación" />
+              </div>
+            </div>
+            <div className="hist-recibo-folio">
+              <div>Folio: {reciboDetalle?.folio || "-"}</div>
+              <div>Fecha: {formatearFecha(reciboDetalle?.fecha || reciboDetalle?.fecha_compra)}</div>
+            </div>
+          </div>
+
+          <h3 className="hist-recibo-title">Recibo de compra</h3>
+
+          <div className="hist-recibo-cliente">
+            <div className="hist-recibo-cliente-label">Cliente</div>
+            <div className="hist-recibo-cliente-datos">
+              <div><strong>Nombre: </strong>{reciboDetalle?.cliente_nombre || reciboDetalle?.cliente || "-"}</div>
+              <div><strong>Teléfono: </strong>{reciboDetalle?.cliente_telefono || "-"}</div>
+              <div><strong>Correo: </strong>{reciboDetalle?.cliente_correo || "-"}</div>
+            </div>
+          </div>
+
+          <table className="hist-recibo-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{reciboDetalle?.producto_nombre || reciboDetalle?.producto || "-"}</td>
+                <td>{reciboDetalle?.cantidad ?? "-"}</td>
+                <td className="hist-recibo-num">
+                  {formatearMoneda(reciboDetalle?.precio_unitario_final ?? reciboDetalle?.precio_original ?? 0)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div className="hist-recibo-pago">
+            <div><strong>Método de pago: </strong>{reciboDetalle?.metodo_pago || "-"}</div>
+            <div><strong>Total: </strong>{formatearMoneda(reciboDetalle?.total ?? 0)}</div>
+          </div>
+
+          <div className="hist-recibo-footer">
+            <p><strong>¡Gracias por tu compra!</strong></p>
+            <p>Con tu apoyo estás ayudando a los programas de la Fundación Recolectando Felicidad A.C.</p>
+            <p className="hist-recibo-legal">Este es un comprobante simplificado sin efectos fiscales.</p>
+          </div>
+        </div>
+      </div>
+
+      {toast.msg && (
+        <div className={`hist-toast ${toast.type === "error" ? "error" : "ok"}`}>
+          {toast.msg}
         </div>
       )}
     </div>

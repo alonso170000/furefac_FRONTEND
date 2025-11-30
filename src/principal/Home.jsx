@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { listarProductos } from "../administracion/servicios/productos";
+import { crearComentarioPublico } from "../administracion/servicios/comentarios";
 import imgPlaceholder from "../assets/manos.jpg";
 import "./Home.css";
 import "./CotizarModal.css";
@@ -134,6 +135,9 @@ export default function PrincipalHome() {
     const valor = productoCotizando?.precio_mxn ?? productoCotizando?.precio ?? productoCotizando?.costo ?? 0;
     return formatearPrecio(valor);
   }, [productoCotizando]);
+  const categoriaProductoCotizar = normalizarCategoria(productoCotizando);
+  const descripcionProductoCotizar = productoCotizando?.descripcion || "Sin descripcion disponible.";
+  const totalImagenesProducto = imagenesProductoCotizar.length;
 
   function handleInputChange(e) {
     const { name, value } = e.target;
@@ -155,11 +159,16 @@ export default function PrincipalHome() {
     setMensaje("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setMensaje("Mensaje enviado con éxito. Nos pondremos en contacto contigo pronto.");
+      await crearComentarioPublico({
+        nombre: formData.nombre.trim(),
+        correo: formData.correo.trim(),
+        telefono: formData.telefono.trim(),
+        comentario: formData.comentario.trim(),
+      });
+      setMensaje("Comentario enviado con éxito. Gracias por escribirnos.");
       setFormData({ nombre: "", correo: "", telefono: "", comentario: "" });
-    } catch {
-      setMensaje("Hubo un error al enviar el mensaje. Por favor intenta nuevamente.");
+    } catch (err) {
+      setMensaje(err?.message || "Hubo un error al enviar el comentario.");
     } finally {
       setEnviando(false);
     }
@@ -172,7 +181,7 @@ export default function PrincipalHome() {
       nombre: "",
       correo: "",
       telefono: "",
-      descripcion: producto?.nombre ? `Quiero cotizar ${producto.nombre}` : "",
+      descripcion: "",
       cantidad: 1,
     });
     setImagenesAdjuntas([]);
@@ -314,15 +323,25 @@ export default function PrincipalHome() {
       {modalCotizarAbierta && (
         <div className="cotizar-overlay" onClick={cerrarModalCotizar}>
           <div className="cotizar-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="cotizar-close" onClick={cerrarModalCotizar} aria-label="Cerrar">X</button>
             <div className="cotizar-title">Cotizar producto</div>
+            <div className="cotizar-headbar">
+              <div className="cotizar-head-meta">
+                <span className="cotizar-pill">{categoriaProductoCotizar || "Producto"}</span>
+                <span className="cotizar-pill ghost">
+                  {totalImagenesProducto || 1} foto{(totalImagenesProducto || 1) === 1 ? "" : "s"}
+                </span>
+              </div>
+              <div className="cotizar-price-chip">{precioProductoCotizar}</div>
+            </div>
             <div className="cotizar-grid">
               <div className="cotizar-col cotizar-col-left">
                 <div className="cotizar-left-panel">
                   <div className="cotizar-left-content">
-                    <p className="cotizar-eyebrow">Detalles del producto</p>
-                    <p className="cotizar-categoria">
-                      {normalizarCategoria(productoCotizando) || "Producto"}
-                    </p>
+                    <div className="cotizar-left-top">
+                      <p className="cotizar-eyebrow">Detalles del producto</p>
+                      <p className="cotizar-tagline">Previsualiza y comparte especificaciones claves.</p>
+                    </div>
                     <div className="cotizar-image-card">
                       <div className="cotizar-image-frame">
                         {imagenesProductoCotizar.length > 0 ? (
@@ -348,31 +367,39 @@ export default function PrincipalHome() {
                               className="slider-btn-public right"
                               onClick={siguienteImagenCotizar}
                               aria-label="Siguiente"
-                            >
-                              {">"}
-                            </button>
-                          </>
-                        )}
+                              >
+                                {">"}
+                              </button>
+                            </>
+                          )}
+                          <div className="cotizar-chip-floating">
+                            {categoriaProductoCotizar || "Producto"}
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="cotizar-titulo">
+                        {productoCotizando?.nombre || productoCotizando?.titulo || "Producto"}
+                      </h3>
+                      <p className="cotizar-descripcion">
+                        {descripcionProductoCotizar}
+                      </p>
+                      <div className="cotizar-meta-row">
+                        <div className="cotizar-pill ghost">{categoriaProductoCotizar || "Sin categoria"}</div>
+                        <div className="cotizar-pill outline">{precioProductoCotizar}</div>
+                      </div>
+                      <div className="cotizar-highlight">
+                        Adjunta referencias para una propuesta precisa. Nos comunicaremos con usted en cuanto sea posible.
                       </div>
                     </div>
-                    <h3 className="cotizar-titulo">
-                      {productoCotizando?.nombre || productoCotizando?.titulo || "Producto"}
-                    </h3>
-                    <p className="cotizar-descripcion">
-                      {productoCotizando?.descripcion || "Sin descripcion disponible."}
-                    </p>
-                    <div className="cotizar-precio">{precioProductoCotizar}</div>
                   </div>
                 </div>
-              </div>
 
-              <div className="cotizar-col cotizar-col-right">
-                <button className="cotizar-close" onClick={cerrarModalCotizar} aria-label="Cerrar">X</button>
-                <div className="cotizar-right-head">
-                  <p className="cotizar-eyebrow">Cotizar producto</p>
-                  <h3>Solicitud de cotizacion</h3>
-                  <p className="cotizar-note">
-                    Completa los campos para recibir una cotizacion personalizada del producto seleccionado.
+                <div className="cotizar-col cotizar-col-right">
+                  <div className="cotizar-right-head">
+                    <p className="cotizar-eyebrow">Cotizar producto</p>
+                    <h3>Solicitud de cotizacion</h3>
+                    <p className="cotizar-note">
+                      Completa los campos para recibir una cotizacion personalizada del producto seleccionado.
                   </p>
                 </div>
 
@@ -698,6 +725,7 @@ function PublicProductCard({ producto, onCotizar }) {
   const actual = imagenes[indice] || imgPlaceholder;
   const precio = formatearPrecio(producto?.precio_mxn ?? producto?.precio ?? producto?.costo ?? 0);
   const categoriaProducto = normalizarCategoria(producto);
+  const descripcion = (producto?.descripcion || "").trim() || "Sin descripcion disponible.";
 
   function siguiente() {
     setIndice((i) => (i + 1) % imagenes.length);
@@ -722,9 +750,10 @@ function PublicProductCard({ producto, onCotizar }) {
       </div>
       <div className="card-info">
         {categoriaProducto && <span className="card-categoria">{categoriaProducto}</span>}
-        <h3 className="card-titulo">{producto.nombre}</h3>
+        <h3 className="card-titulo-info">{producto.nombre}</h3>
+        <p className="card-descripcion-publico">{descripcion}</p>
         <div className="card-pie-principal">
-          <span className="card-precio">{precio}</span>
+          <span className="card-precio-info">{precio}</span>
           <button type="button" className="btn-cotizar" onClick={onCotizar}>
             Cotizar
           </button>
@@ -733,4 +762,3 @@ function PublicProductCard({ producto, onCotizar }) {
     </article>
   );
 }
-

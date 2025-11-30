@@ -17,6 +17,7 @@ import {
   obtenerPermisosRol,
   actualizarPermisosRol,
 } from "../servicios/usuarios";
+import {FiSettings, FiSearch} from "react-icons/fi";
   
 export default function Usuarios() {
   const { usuario: usuarioActual } = useAuth();
@@ -53,26 +54,26 @@ export default function Usuarios() {
     nombre: "",
   });
 
-  // ✅ FUNCIÓN HELPER: Verificar si un usuario es Superadmin
+  // FUNCIÓN HELPER: Verificar si un usuario es Superadmin
   const esSuperadmin = (usuario) => {
     // Verificar por nombre de rol (case insensitive)
     return usuario?.rol_nombre?.toLowerCase() === "superadmin";
   };
 
-  // ✅ FUNCIÓN HELPER: Verificar si es el usuario actual
+  // FUNCIÓN HELPER: Verificar si es el usuario actual
   const esUsuarioActual = (usuarioId) => {
     return usuarioId === usuarioActual?.id;
   };
 
-  // ✅ NUEVO: Verificar si un rol es el del usuario actual
+  // NUEVO: Verificar si un rol es el del usuario actual
   const esMiRol = (rolNombre) => {
     if (!usuarioActual) {
-      console.warn("⚠️ usuarioActual es null o undefined");
+      console.warn("usuarioActual es null o undefined");
       return false;
     }
     
     if (!usuarioActual.rol_nombre) {
-      console.warn("⚠️ usuarioActual no tiene campo rol_nombre:", usuarioActual);
+      console.warn("usuarioActual no tiene campo rol_nombre:", usuarioActual);
       return false;
     }
     
@@ -185,8 +186,13 @@ export default function Usuarios() {
           apellido: formUsuario.apellido,
           correo: formUsuario.correo,
         };
+
+        // Solo enviar nueva contrasena si el campo no viene vacio
+        if (formUsuario.password.trim()) {
+          payload.password = formUsuario.password.trim();
+        }
         
-        // ✅ Solo incluir rol y estado si NO es el usuario actual
+        // Solo incluir rol y estado si NO es el usuario actual
         if (!esUsuarioActual(usuarioEditar.id)) {
           payload.rol_id = formUsuario.rol_id;
           payload.activo = formUsuario.activo;
@@ -208,13 +214,13 @@ export default function Usuarios() {
   };
 
   const handleEliminarUsuario = async (id, nombreUsuario, usuario) => {
-    // ✅ PROTECCIÓN 1: No permitir eliminar Superadmins
+    // PROTECCIÓN 1: No permitir eliminar Superadmins
     if (esSuperadmin(usuario)) {
       setError("No se puede eliminar un usuario Superadmin");
       return;
     }
     
-    // ✅ PROTECCIÓN 2: No permitir eliminarte a ti mismo
+    // PROTECCIÓN 2: No permitir eliminarte a ti mismo
     if (esUsuarioActual(id)) {
       setError("No puedes eliminar tu propia cuenta");
       return;
@@ -264,14 +270,14 @@ export default function Usuarios() {
 
     try {
       if (rolEditar) {
-        // ✅ PROTECCIÓN 1: No permitir editar el rol Superadmin
+        // PROTECCIÓN 1: No permitir editar el rol Superadmin
         if (rolEditar.nombre.toLowerCase() === "superadmin") {
           setError("No se puede editar el rol Superadmin");
           setCargando(false);
           return;
         }
         
-        // ✅ PROTECCIÓN 2: No permitir editar el rol Admin
+        // PROTECCIÓN 2: No permitir editar el rol Admin
         if (rolEditar.nombre.toLowerCase() === "admin") {
           setError("No se puede editar el rol Admin");
           setCargando(false);
@@ -294,13 +300,13 @@ export default function Usuarios() {
   };
 
   const handleEliminarRol = async (id, nombreRol) => {
-    // ✅ PROTECCIÓN 1: No permitir eliminar el rol Superadmin
+    // PROTECCIÓN 1: No permitir eliminar el rol Superadmin
     if (nombreRol.toLowerCase() === "superadmin") {
       setError("No se puede eliminar el rol Superadmin");
       return;
     }
     
-    // ✅ PROTECCIÓN 2: No permitir eliminar el rol Admin
+    // PROTECCIÓN 2: No permitir eliminar el rol Admin
     if (nombreRol.toLowerCase() === "admin") {
       setError("No se puede eliminar el rol Admin");
       return;
@@ -366,7 +372,7 @@ export default function Usuarios() {
 
   // ==================== FILTROS ====================
 
-  // ✅ PROTECCIÓN: Ocultar usuarios Superadmin (excepto si TÚ eres Superadmin)
+  // PROTECCIÓN: Ocultar usuarios Superadmin (excepto si TÚ eres Superadmin)
   const usuariosFiltrados = usuarios
     .filter((u) => {
       // Si eres Superadmin, puedes ver a todos (incluyendo otros Superadmins)
@@ -391,7 +397,7 @@ export default function Usuarios() {
     r.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  // ✅ NUEVO: Filtrar roles para el dropdown del modal (ocultar Superadmin excepto si eres Superadmin)
+  // NUEVO: Filtrar roles para el dropdown del modal (ocultar Superadmin excepto si eres Superadmin)
   const rolesDisponibles = roles.filter((r) => {
     // Si eres Superadmin, puedes asignar cualquier rol (incluyendo Superadmin)
     if (esSuperadmin(usuarioActual)) {
@@ -430,19 +436,19 @@ export default function Usuarios() {
           onClick={() => setVistaActual("usuarios")}
           className={`tab-btn ${vistaActual === "usuarios" ? "active" : ""}`}
         >
-          <span>👥</span> Usuarios
+          Usuarios
         </button>
         <button
           onClick={() => setVistaActual("roles")}
           className={`tab-btn ${vistaActual === "roles" ? "active" : ""}`}
         >
-          <span>🎭</span> Roles
+          Roles
         </button>
         <button
           onClick={() => setVistaActual("permisos")}
           className={`tab-btn ${vistaActual === "permisos" ? "active" : ""}`}
         >
-          <span>🔐</span> Permisos
+          Permisos
         </button>
       </div>
 
@@ -458,11 +464,11 @@ export default function Usuarios() {
                 <div className="usuarios-buscador">
                   <input
                     type="text"
-                    placeholder="Buscar usuario..."
+                    placeholder="Buscar usuario"
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
                   />
-                  <button>🔍</button>
+                  <button><FiSearch /></button>
                 </div>
               </div>
 
@@ -514,7 +520,7 @@ export default function Usuarios() {
                               >
                                 Editar
                               </button>
-                              {/* ✅ Mostrar eliminar solo si NO es Superadmin Y NO es tu usuario */}
+                              {/* Mostrar eliminar solo si NO es Superadmin Y NO es tu usuario */}
                               {!esSuperadmin(usuario) && !esUsuarioActual(usuario.id) && (
                                 <button
                                   onClick={() =>
@@ -546,11 +552,11 @@ export default function Usuarios() {
                 <div className="usuarios-buscador">
                   <input
                     type="text"
-                    placeholder="Buscar rol..."
+                    placeholder="Buscar rol"
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
                   />
-                  <button>🔍</button>
+                  <button><FiSearch/></button>
                 </div>
               </div>
 
@@ -572,7 +578,7 @@ export default function Usuarios() {
                           <h3>{rol.nombre}</h3>
                           <p>ID: {rol.id}</p>
                         </div>
-                        <div className="rol-card-icon">🎭</div>
+                        <div className="rol-card-icon"> <FiSettings></FiSettings> </div>
                       </div>
                       <div className="rol-card-meta">
                         Creado: {new Date(rol.creado_en).toLocaleDateString()}
@@ -584,7 +590,7 @@ export default function Usuarios() {
                         >
                           Editar
                         </button>
-                        {/* ✅ No mostrar eliminar si es Superadmin o Admin */}
+                        {/* No mostrar eliminar si es Superadmin o Admin */}
                         {rol.nombre.toLowerCase() !== "superadmin" && 
                          rol.nombre.toLowerCase() !== "admin" && (
                           <button
@@ -612,7 +618,7 @@ export default function Usuarios() {
                   onChange={(e) => cargarPermisosRol(Number(e.target.value))}
                 >
                   <option value="">-- Selecciona un rol --</option>
-                  {/* ✅ Filtrar Superadmin (excepto si eres Superadmin) */}
+                  {/* Filtrar Superadmin (excepto si eres Superadmin) */}
                   {roles
                     .filter((rol) => {
                       // Si eres Superadmin, puedes editar permisos de todos los roles
@@ -823,7 +829,7 @@ export default function Usuarios() {
                       marginTop: '4px', 
                       display: 'block' 
                     }}>
-                      🔒 No puedes cambiar tu propio rol
+                      No puedes cambiar tu propio rol
                     </small>
                   )}
                 </div>
@@ -850,7 +856,7 @@ export default function Usuarios() {
                       marginTop: '4px', 
                       display: 'block' 
                     }}>
-                      🔒 No puedes cambiar tu propio estado
+                      No puedes cambiar tu propio estado
                     </small>
                   )}
                 </div>
@@ -900,7 +906,7 @@ export default function Usuarios() {
                     marginTop: '4px', 
                     display: 'block' 
                   }}>
-                    🔒 El rol Superadmin no se puede editar
+                    El rol Superadmin no se puede editar
                   </small>
                 )}
                 {rolEditar?.nombre.toLowerCase() === "admin" && (

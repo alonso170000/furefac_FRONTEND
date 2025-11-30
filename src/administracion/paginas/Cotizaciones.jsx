@@ -9,6 +9,7 @@ import {
   obtenerImagenesCotizacion,
 } from "../servicios/cotizaciones";
 import { listarImagenesProducto, listarCategorias, listarProductos } from "../servicios/productos";
+import { listarContactosDisponibles, enviarNotificacionCompra } from "../servicios/notificaciones"; // ✅ AGREGADO
 import { FiX, FiUploadCloud, FiImage, FiPlus, FiAlertTriangle } from "react-icons/fi";
 
 const ESTADOS = [
@@ -58,9 +59,15 @@ export default function Cotizaciones() {
     precioFinal: "",
     notas: "",
     enviarRecibo: true,
+    notificarContacto: false,      
+    contactoSeleccionado: "",      
+    tipoNotificacion: "correo",    
   });
   const [enviandoCompra, setEnviandoCompra] = useState(false);
   const [confirmarCompraAbierta, setConfirmarCompraAbierta] = useState(false);
+  const [contactosDisponibles, setContactosDisponibles] = useState([]); 
+  const [cargandoContactos, setCargandoContactos] = useState(false);    
+  
   const METODOS_PAGO = [
     { value: "efectivo", label: "Efectivo" },
     { value: "transferencia", label: "Transferencia bancaria" },
@@ -80,7 +87,6 @@ export default function Cotizaciones() {
       setError("");
       const data = await listarCotizaciones({ estado, q });
       setLista(Array.isArray(data) ? data : []);
-      // carga imágenes por cotización
       const imagenesPorId = {};
       const productoImgPorCot = {};
       await Promise.all(
@@ -200,7 +206,7 @@ export default function Cotizaciones() {
     if (!fileList?.length) return;
     const disponibles = LIMITE_IMAGENES_COTZ - imagenesModal.length;
     if (disponibles <= 0) {
-      setErrorModal(`Solo puedes agregar hasta ${LIMITE_IMAGENES_COTZ} im\u00e1genes`);
+      setErrorModal(`Solo puedes agregar hasta ${LIMITE_IMAGENES_COTZ} imágenes`);
       return;
     }
     const seleccionados = Array.from(fileList).slice(0, disponibles);
@@ -302,7 +308,7 @@ export default function Cotizaciones() {
       cerrarModal();
       cargar();
     } catch (err) {
-      setErrorModal(err?.message || "No se pudo crear la cotizaci\u00f3n");
+      setErrorModal(err?.message || "No se pudo crear la cotización");
     } finally {
       setEnviando(false);
     }
@@ -313,6 +319,20 @@ export default function Cotizaciones() {
     const term = q.toLowerCase();
     return lista.filter((c) => (c.descripcion || "").toLowerCase().includes(term));
   }, [lista, q]);
+
+  
+  async function cargarContactosDisponibles() {
+    try {
+      setCargandoContactos(true);
+      const data = await listarContactosDisponibles();
+      setContactosDisponibles(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error al cargar contactos:", err);
+      setContactosDisponibles([]);
+    } finally {
+      setCargandoContactos(false);
+    }
+  }
 
   function abrirCompraModal(cotizacion) {
     if (!cotizacion) return;
@@ -334,8 +354,14 @@ export default function Cotizaciones() {
       precioFinal: precioBase,
       notas: "",
       enviarRecibo: true,
+      notificarContacto: false,      // ✅ AGREGADO
+      contactoSeleccionado: "",      // ✅ AGREGADO
+      tipoNotificacion: "correo",    // ✅ AGREGADO
     });
     setCompraModalAbierta(true);
+    
+    // ✅ AGREGADO: Cargar contactos
+    cargarContactosDisponibles();
   }
 
   function cerrarCompraModal() {
@@ -349,6 +375,9 @@ export default function Cotizaciones() {
       precioFinal: "",
       notas: "",
       enviarRecibo: true,
+      notificarContacto: false,      // ✅ AGREGADO
+      contactoSeleccionado: "",      // ✅ AGREGADO
+      tipoNotificacion: "correo",    // ✅ AGREGADO
     });
     setEnviandoCompra(false);
     setConfirmarCompraAbierta(false);
@@ -403,7 +432,9 @@ export default function Cotizaciones() {
           cotizacionSeleccionada.categoria ||
           null,
       };
+      
       await registrarCompra(payload);
+      
       try {
         await cambiarEstadoCotizacion(cotizacionSeleccionada.id, "comprado");
         setLista((prev) =>
@@ -412,6 +443,22 @@ export default function Cotizaciones() {
       } catch (estadoErr) {
         setErrorCompra(estadoErr?.message || "La compra se guardó pero no se pudo actualizar el estado");
       }
+      
+      // ✅ AGREGADO: Enviar notificación si está marcado
+      if (compraForm.notificarContacto && compraForm.contactoSeleccionado) {
+        try {
+          await enviarNotificacionCompra({
+            contacto_id: Number(compraForm.contactoSeleccionado),
+            tipo: compraForm.tipoNotificacion,
+            datos_compra: payload,
+          });
+          console.log("✅ Notificación enviada correctamente");
+        } catch (notifErr) {
+          console.error("❌ Error al enviar notificación:", notifErr);
+          // No bloqueamos la compra si falla la notificación
+        }
+      }
+      
       cerrarCompraModal();
       cargar();
     } catch (err) {
@@ -651,6 +698,66 @@ export default function Cotizaciones() {
                     <span>Total:</span>
                     <strong>${(totalCompra || 0).toFixed(2)}</strong>
                   </div>
+
+                  {/* ✅ SECCIÓN NUEVA: Notificaciones */}
+                  <div className="compra-section compra-section-notificacion">
+                    <h4>Notificación</h4>
+                    
+                    <label className="compra-check">
+                      <input
+                        type="checkbox"
+                        checked={compraForm.notificarContacto}
+                        onChange={(e) => setCompraForm((p) => ({ 
+                          ...p, 
+                          notificarContacto: e.target.checked 
+                        }))}
+                      />
+                      <span>Notificar a un contacto</span>
+                    </label>
+
+                    {compraForm.notificarContacto && (
+                      <>
+                        <label className="cotz-field">
+                          <span>Contacto:</span>
+                          <select
+                            className="cotz-input"
+                            value={compraForm.contactoSeleccionado}
+                            onChange={(e) => setCompraForm((p) => ({ 
+                              ...p, 
+                              contactoSeleccionado: e.target.value 
+                            }))}
+                            disabled={cargandoContactos}
+                          >
+                            <option value="">
+                              {cargandoContactos ? "Cargando..." : "Selecciona un contacto"}
+                            </option>
+                            {contactosDisponibles.map((contacto) => (
+                              <option key={contacto.id} value={contacto.id}>
+                                {contacto.nombre} - {contacto.correo}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+
+                        <label className="cotz-field">
+                          <span>Enviar por:</span>
+                          <select
+                            className="cotz-input"
+                            value={compraForm.tipoNotificacion}
+                            onChange={(e) => setCompraForm((p) => ({ 
+                              ...p, 
+                              tipoNotificacion: e.target.value 
+                            }))}
+                          >
+                            <option value="correo">Correo electrónico</option>
+                            <option value="sms">SMS (simulado)</option>
+                            <option value="ambos">Correo y SMS</option>
+                          </select>
+                        </label>
+                      </>
+                    )}
+                  </div>
+                  {/* ✅ FIN SECCIÓN NUEVA */}
 
                   {errorCompra && <div className="cotz-modal-error">{errorCompra}</div>}
 
