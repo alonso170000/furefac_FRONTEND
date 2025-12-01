@@ -554,6 +554,24 @@
   z-index: 2400;
 }
 
+.cotizar-overlay::-webkit-scrollbar {
+  width: 10px;
+}
+
+.cotizar-overlay::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0);
+  border-radius: 10px;
+}
+
+.cotizar-overlay::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+}
+
+.cotizar-overlay::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
 .cotz-modal-shell {
   position: relative;
   width: min(1180px, 96vw);
@@ -626,9 +644,24 @@
   max-height: calc(94vh - 120px);
   padding-right: 4px;
   overflow-y: auto;
-  -webkit-scrollbar: none;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+}
+
+.cotz-modal-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cotz-modal-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+
+.cotz-modal-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+}
+
+.cotz-modal-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .cotz-modal-panel {
@@ -1026,9 +1059,24 @@
   align-items: stretch;
   max-height: calc(94vh - 120px);
   overflow-y: auto;
-  -webkit-scrollbar: none;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+}
+
+.compra-modal-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.compra-modal-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+
+.compra-modal-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+}
+
+.compra-modal-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .compra-panel {

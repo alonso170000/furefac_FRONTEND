@@ -4,6 +4,7 @@ import { crearComentarioPublico } from "../administracion/servicios/comentarios"
 import imgPlaceholder from "../assets/manos.jpg";
 import "./Home.css";
 import "./CotizarModal.css";
+import { FiArrowUp, FiChevronDown, FiSearch, FiX } from "react-icons/fi";
 
 const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 const formatoMXN = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
@@ -323,7 +324,7 @@ export default function PrincipalHome() {
       {modalCotizarAbierta && (
         <div className="cotizar-overlay" onClick={cerrarModalCotizar}>
           <div className="cotizar-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="cotizar-close" onClick={cerrarModalCotizar} aria-label="Cerrar">X</button>
+            <button className="cotizar-close" onClick={cerrarModalCotizar} aria-label="Cerrar"> <FiX></FiX></button>
             <div className="cotizar-title">Cotizar producto</div>
             <div className="cotizar-headbar">
               <div className="cotizar-head-meta">
@@ -340,7 +341,6 @@ export default function PrincipalHome() {
                   <div className="cotizar-left-content">
                     <div className="cotizar-left-top">
                       <p className="cotizar-eyebrow">Detalles del producto</p>
-                      <p className="cotizar-tagline">Previsualiza y comparte especificaciones claves.</p>
                     </div>
                     <div className="cotizar-image-card">
                       <div className="cotizar-image-frame">
@@ -397,7 +397,6 @@ export default function PrincipalHome() {
                 <div className="cotizar-col cotizar-col-right">
                   <div className="cotizar-right-head">
                     <p className="cotizar-eyebrow">Cotizar producto</p>
-                    <h3>Solicitud de cotizacion</h3>
                     <p className="cotizar-note">
                       Completa los campos para recibir una cotizacion personalizada del producto seleccionado.
                   </p>
@@ -430,7 +429,7 @@ export default function PrincipalHome() {
                       <span>Telefono*</span>
                       <input
                         type="tel"
-                        placeholder="(###) ####-####"
+                        placeholder="Número de teléfono"
                         value={formCotizar.telefono}
                         onChange={(e) => setFormCotizar({ ...formCotizar, telefono: e.target.value })}
                         required
@@ -536,16 +535,19 @@ export default function PrincipalHome() {
           <h2 className="productos-titulo">PRODUCTOS</h2>
           
           <div className="productos-controles">
-            <select 
-              className="select-categoria"
-              value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
-            >
-              <option value="todos">Todos</option>
-              {categoriasDisponibles.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+            <div className="select-wrapper">
+              <FiChevronDown className="select-icon" aria-hidden="true" />
+              <select 
+                className="select-categoria"
+                value={categoria}
+                onChange={(e) => setCategoria(e.target.value)}
+              >
+                <option value="todos">Todos</option>
+                {categoriasDisponibles.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
             
             <form className="buscador-productos" onSubmit={(e) => e.preventDefault()}>
               <input 
@@ -554,7 +556,10 @@ export default function PrincipalHome() {
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
               />
-              <button type="submit">Buscar</button>
+              <button type="submit">
+                <FiSearch aria-hidden="true" />
+                <span></span>
+              </button>
             </form>
           </div>
         </div>
@@ -669,23 +674,23 @@ export default function PrincipalHome() {
 
           <div className="footer-columna">
             <h4>Contáctanos</h4>
-            <p>Correo: contacto@fundacionfelicidad.org</p>
-            <p>Teléfono: +52 (999) 123-4567</p>
-            <p>Ubicación: Cancún, Quintana Roo, México</p>
+            <p>Correo: furefeac@gmail.com</p>
+            <p>Teléfono: +52 998 475 6646</p>
+            <p>Ubicación: C. 69 134C-M3, L2, El Petén, 77519 Cancún, Q.R.</p>
           </div>
 
           <div className="footer-columna">
             <h4>Síguenos</h4>
             <div className="footer-redes">
-              <a href="#" aria-label="Facebook">Facebook</a>
-              <a href="#" aria-label="Instagram">Instagram</a>
-              <a href="#" aria-label="Twitter">Twitter</a>
+              <a href="https://www.facebook.com/share/17AWj2oarB/" aria-label="Facebook">Facebook</a>
+              <a href="https://www.instagram.com/furefeac?igsh=NDZzZ3BzY3F6NTRh" aria-label="Instagram">Instagram</a>
+              <a href="https://www.tiktok.com/@furefeac" aria-label="Twitter">Tiktok</a>
             </div>
           </div>
 
           <div className="footer-columna">
             <h4>Enlaces</h4>
-            <a href="/administracion/acceso">Administración</a>
+            <a href="https://www.furefeac.org/">Home</a>
             <a href="#productos">Productos</a>
             <a href="#contacto">Contacto</a>
           </div>

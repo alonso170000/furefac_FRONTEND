@@ -24,32 +24,35 @@
   position: fixed;
   inset: 0;
   display: grid;
-  place-items: center;
-  padding: 1px;
+  place-items: start center;
+  align-content: start;
+  padding: 32px 14px;
   background: rgba(10, 12, 24, 0.65);
   backdrop-filter: blur(10px);
   z-index: 200;
   animation: cotizar-fade-in 0.22s ease-out;
+  overflow-y: auto;
+  
 }
 
 /* ===========================
    Contenedor principal del modal
    =========================== */
 .cotizar-modal {
-  width: min(1080px, 96vw);
-  max-height: 90vh;
-  height: 1500px;
+  width: min(1200px, 94vw);
+  max-height: none;
+  height: auto;
   border-radius: 26px;
   background: linear-gradient(135deg, #ff2fa3 0%, #7a2fd6 45%, #1698d6 100%);
   box-shadow: 0 28px 74px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 0px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;          /* clip del gradiente */
   display: flex;             /* para poder hacer scroll en el body */
   flex-direction: column;
   color: #ffffff;
   animation: cotizar-pop 0.22s ease-out;
-  padding: 22px 20px 18px;
+  padding: 18px 16px 16px;
 }
 
 .cotizar-modal::before {
@@ -151,11 +154,11 @@
 .cotizar-grid {
   position: relative;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   background: rgba(255, 255, 255, 0.02);
-  flex: 1;                     /* ocupa el alto disponible */
-  overflow-y: auto;            /* SCROLL del contenido */
-  min-height: 0;               /* permite que el flex recorte correctamente */
+  align-items: start;
+  flex: 0 0 auto;
+  overflow: visible;
   gap: 12px;
   padding: 16px;
   margin-top: 2px;
@@ -176,7 +179,7 @@
 /* Columna base */
 .cotizar-col {
   position: relative;
-  padding: 28px 24px;
+  padding: 18px 16px;
 }
 
 /* ===========================
@@ -186,20 +189,22 @@
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.18));
   color: #ffffff;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
   text-align: center;
   border-radius: 18px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  padding: 0;
 }
 
 .cotizar-left-panel {
   width: 100%;
-  max-width: 480px;
-  margin: 12px auto;
+  max-width: none;
+  height: 100%;
+  margin: 0;
   background: linear-gradient(180deg, rgba(12, 9, 36, 0.55), rgba(12, 9, 36, 0.28));
   border-radius: 18px;
-  padding: 20px 18px 22px;
+  padding: 18px 16px 20px;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.09),
     0 18px 38px rgba(0, 0, 0, 0.32);
@@ -208,7 +213,7 @@
 
 .cotizar-left-content {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .cotizar-left-top {
@@ -252,8 +257,8 @@
   border-radius: 14px;
   overflow: hidden;
   background: radial-gradient(circle at top, #ffffff 0%, #dbeafe 40%, #0f172a6e 100%);
-  min-height: 200px;
-  max-height: 420px;
+  min-height: 180px;
+  max-height: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -368,7 +373,7 @@
   color: #f4f7ff;
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.35);
   border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 0px solid rgba(255, 255, 255, 0.14);
 }
 
 .cotizar-close {
@@ -421,18 +426,21 @@
 .cotizar-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 14px;
-  padding: 10px 12px 4px;
+  padding: 12px 14px 10px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .cotizar-section{
-  padding: 10px 0;
+  padding: 10px 0 4px;
   border-bottom: 1px dashed #e5e7eb;
   color: #ffffff;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px 16px;
 }
 
 .cotizar-section:last-of-type {
@@ -440,16 +448,18 @@
 }
 
 .cotizar-section h4 {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-size: 0.95rem;
   font-weight: 800;
   color: #7fe8ff;
+  grid-column: 1 / -1;
 }
 
 .cotizar-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
+  grid-column: 1 / -1;
 }
 
 /* Campos */
@@ -513,6 +523,7 @@
   display: grid;
   gap: 8px;
   margin-top: 8px;
+  grid-column: 1 / -1;
 }
 
 .cotizar-upload-row {
@@ -580,6 +591,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
+  grid-column: 1 / -1;
 }
 
 .cotizar-preview-card {
@@ -618,7 +630,7 @@
    Acciones / botones
    =========================== */
 .cotizar-actions {
-  margin-top: 10px;
+  margin-top: 12px;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -657,7 +669,7 @@
 /* Alturas bajas: reduce un poco el alto máximo */
 @media (max-height: 780px) {
   .cotizar-modal {
-    max-height: 84vh;
+    max-height: none;
   }
 }
 
@@ -673,9 +685,12 @@
 
 /* Móviles */
 @media (max-width: 640px) {
+  .cotizar-overlay {
+    padding: 18px 10px;
+  }
   .cotizar-modal {
     width: 94vw;
-    max-height: 88vh;
+    max-height: none;
   }
   .cotizar-headbar {
     flex-direction: column;
