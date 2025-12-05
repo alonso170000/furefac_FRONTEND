@@ -537,6 +537,7 @@ h3.card-titulo {
 
 .card-descripcion {
   display: -webkit-box;         /* Habilita el modelo de caja flexible webkit */
+  line-clamp: 2;
   -webkit-line-clamp: 2;        /* Limita el texto a 3 líneas */
   -webkit-box-orient: vertical; /* Establece la orientación vertical */
   overflow: hidden;             /* Oculta el texto desbordado */
