@@ -596,13 +596,12 @@ span.card-precio {
 .estado {
   padding: 12px;
   color: #374151;
-  background: #fff;
+  background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
 }
 
-.estado.error { color: #b3261e; }
 .resumen-lista { margin-top: 6px; color: #6b7280; }
 
 /* ======== COMENTARIOS ======== */
@@ -1052,6 +1051,22 @@ span.card-precio {
 .btn-mini {
   padding: 6px 10px;
   border-radius: 10px;
+}
+
+.btn-mini-rojo {
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #ff4b4b, #bf0000);
+  padding: 6px 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(191, 0, 0, 0.32);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  border: none;
+}
+
+.btn-mini-rojo:hover {
+  box-shadow: 0 6px 14px rgba(191, 0, 0, 0.42);
+  transform: translateY(-1px);
 }
 
 .modal-cat-actions {

@@ -554,12 +554,11 @@ body {
 
 .estado-productos {
   grid-column: 1 / -1;
-  background: #ffffff;
-  border: 1px dashed #d1d5db;
+  background: linear-gradient(120deg, #86ff98 , #349e44 );
   border-radius: 16px;
   padding: 18px;
   text-align: center;
-  color: #374151;
+  color: #23860a;
   font-weight: 600;
 }
 

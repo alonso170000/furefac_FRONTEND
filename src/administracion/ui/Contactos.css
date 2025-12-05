@@ -359,6 +359,11 @@
   transition: all 0.2s ease;
 }
 
+.modal-contactos-field select option{
+  background: #150023;
+  color: #ffffff;
+}
+
 .modal-contactos-field input::placeholder {
   color: rgba(255, 255, 255, 0.6);
 }
