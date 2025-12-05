@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./../ui/Historial.css";
 import { listarHistorial, obtenerDetalleHistorial, reenviarReciboHistorial } from "../servicios/historial";
 import { obtenerCotizacion } from "../servicios/cotizaciones";
-import { FiX } from "react-icons/fi";
+import { FiAlertTriangle, FiEye, FiFileText, FiSearch, FiSend, FiX } from "react-icons/fi";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import logoFundacion from "../../assets/logo-fundacion.png";
@@ -26,6 +26,7 @@ export default function Historial() {
   const toastTimeout = useRef(null);
   const reciboRef = useRef(null);
   const reciboHiddenRef = useRef(null);
+  const [confirmarReenvio, setConfirmarReenvio] = useState(null);
 
   useEffect(() => {
     cargar();
@@ -219,8 +220,8 @@ export default function Historial() {
   return (
     <div className="hist-page">
       <div className="hist-hero">
-        <h1 className="hist-title"></h1>
         <div className="hist-search">
+          <FiSearch className="hist-search-icon" aria-hidden="true" />
           <input
             type="search"
             placeholder="Buscar"
@@ -268,14 +269,21 @@ export default function Historial() {
                     <td>{[item.usuario_nombre, item.usuario_apellido].filter(Boolean).join(" ") || "-"}</td>
                     <td>
                       <div className="hist-actions">
-                        <button className="hist-pill hist-pill-yellow" onClick={() => verDetalles(item)}>
-                          Ver detalles
+                        <button className="hist-btn hist-btn-yellow" onClick={() => verDetalles(item)}>
+                          <FiEye></FiEye>
+                          <span>Ver detalles</span>
                         </button>
-                        <button className="hist-pill hist-pill-green" onClick={() => verRecibo(item)}>
-                          Ver recibo
+                        <button className="hist-btn hist-btn-green" onClick={() => verRecibo(item)}>
+                          <FiFileText></FiFileText>
+                          <span>Ver recibo</span>
                         </button>
-                        <button className="hist-pill hist-pill-blue" onClick={() => reenviarRecibo(item)} disabled={reenviandoId === item.id}>
-                          Reenviar recibo
+                        <button
+                          className="hist-btn hist-btn-blue"
+                          onClick={() => setConfirmarReenvio(item)}
+                          disabled={reenviandoId === item.id}
+                        >
+                          <FiSend></FiSend>
+                          <span>{reenviandoId === item.id ? "Enviando..." : "Reenviar recibo"}</span>
                         </button>
                       </div>
                     </td>
@@ -557,6 +565,35 @@ export default function Historial() {
       {toast.msg && (
         <div className={`hist-toast ${toast.type === "error" ? "error" : "ok"}`}>
           {toast.msg}
+        </div>
+      )}
+
+      {confirmarReenvio && (
+        <div className="hist-modal-overlay" onClick={() => setConfirmarReenvio(null)}>
+          <div className="hist-confirm-card" onClick={(e) => e.stopPropagation()}>
+            <div className="hist-confirm-icon">
+              <FiAlertTriangle />
+            </div>
+            <p className="hist-confirm-text">
+              ¿Seguro que deseas reenviar el recibo al cliente?
+            </p>
+            <div className="hist-confirm-actions">
+              <button className="hist-btn hist-btn-yellow" type="button" onClick={() => setConfirmarReenvio(null)}>
+                Cancelar
+              </button>
+              <button
+                className="hist-btn hist-btn-blue"
+                type="button"
+                onClick={() => {
+                  const item = confirmarReenvio;
+                  setConfirmarReenvio(null);
+                  reenviarRecibo(item);
+                }}
+              >
+                Reenviar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -25,6 +25,7 @@ export default function Contactos() {
     nombre: "",
     numero: "",
     correo: "",
+    activo: true,
   });
 
   // Cargar contactos al inicio
@@ -50,9 +51,10 @@ export default function Contactos() {
     if (contacto) {
       setContactoEditar(contacto);
       setFormContacto({
-        nombre: contacto.nombre,
-        numero: contacto.numero,
-        correo: contacto.correo,
+        nombre: contacto.nombre || "",
+        numero: contacto.numero || "",
+        correo: contacto.correo || "",
+        activo: contacto.activo === 0 ? false : true,
       });
     } else {
       setContactoEditar(null);
@@ -60,6 +62,7 @@ export default function Contactos() {
         nombre: "",
         numero: "",
         correo: "",
+        activo: true,
       });
     }
     setModalAbierto(true);
@@ -72,6 +75,7 @@ export default function Contactos() {
       nombre: "",
       numero: "",
       correo: "",
+      activo: true,
     });
   };
 
@@ -80,14 +84,25 @@ export default function Contactos() {
     e.preventDefault();
     setError("");
     setExito("");
+
+    const nombre = (formContacto.nombre || "").trim();
+    const numero = (formContacto.numero || "").trim();
+    const correo = (formContacto.correo || "").trim();
+
+    if (!numero && !correo) {
+      setError("Agrega al menos un numero o un correo.");
+      return;
+    }
+
     setCargando(true);
 
     try {
+      const payload = { ...formContacto, nombre, numero, correo, activo: formContacto.activo ? 1 : 0 };
       if (contactoEditar) {
-        await actualizarContacto(contactoEditar.id, formContacto);
+        await actualizarContacto(contactoEditar.id, payload);
         setExito("Contacto actualizado correctamente");
       } else {
-        await crearContacto(formContacto);
+        await crearContacto(payload);
         setExito("Contacto creado correctamente");
       }
       await cargarContactos();
@@ -141,10 +156,6 @@ export default function Contactos() {
 
   return (
     <div className="pagina-contactos">
-      {/* Header */}
-      <div className="contactos-header">
-        <h1>Contactos</h1>
-      </div>
 
       {/* Mensajes */}
       {error && (
@@ -197,7 +208,8 @@ export default function Contactos() {
                   <th>Nombre</th>
                   <th>Numero</th>
                   <th>Correo</th>
-                  <th>Fecha de creación</th>
+                  <th>Activo</th>
+                  <th>Fecha de creaci?n</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -207,6 +219,7 @@ export default function Contactos() {
                     <td className="contacto-nombre">{contacto.nombre}</td>
                     <td className="contacto-numero">{contacto.numero}</td>
                     <td className="contacto-correo">{contacto.correo}</td>
+                    <td className="contacto-activo">{contacto.activo ? "Si" : "No"}</td>
                     <td className="contacto-fecha">
                       {formatearFecha(contacto.creado_en)}
                     </td>
@@ -259,29 +272,40 @@ export default function Contactos() {
               </div>
 
               <div className="modal-contactos-field">
-                <label>Número *</label>
+                <label>Número (opcional)</label>
                 <input
                   type="tel"
                   value={formContacto.numero}
                   onChange={(e) =>
                     setFormContacto({ ...formContacto, numero: e.target.value })
                   }
-                  required
                   placeholder="Ej: 9988776655"
                 />
               </div>
 
               <div className="modal-contactos-field">
-                <label>Correo *</label>
+                <label>Correo (opcional)</label>
                 <input
                   type="email"
                   value={formContacto.correo}
                   onChange={(e) =>
                     setFormContacto({ ...formContacto, correo: e.target.value })
                   }
-                  required
                   placeholder="Ej: contacto@ejemplo.com"
                 />
+              </div>
+
+              <div className="modal-contactos-field">
+                <label>Activo</label>
+                <select
+                  value={formContacto.activo ? "1" : "0"}
+                  onChange={(e) =>
+                    setFormContacto({ ...formContacto, activo: e.target.value === "1" })
+                  }
+                >
+                  <option value="1">Si</option>
+                  <option value="0">No</option>
+                </select>
               </div>
 
               <div className="modal-contactos-actions">

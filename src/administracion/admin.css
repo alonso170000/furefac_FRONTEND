@@ -1,11 +1,12 @@
 /* src/administracion/admin.css */
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Oswald:wght@200..700&display=swap');
 
 :root {
   --rosa: #f44ba1;
   --morado: #6c5ff8;
   --cian: #2dc8ed;
   --gris-texto: #1f2a3d;
-  --sidebar-width: 300px;
+  --sidebar-width: 270px;
   --sidebar-gap: 26px;
   --header-height: 190px;
   --radius-lg: 28px;
@@ -30,14 +31,14 @@ body {
   top: 22px;
   left: 22px;
   bottom: 22px;
-  width: 270px;
+  width: var(--sidebar-width);
   background: linear-gradient(90deg, #ff53ae 0%, #03aee2 100%);
   border-radius: 20px;
   box-shadow: 0 16px 40px rgba(17, 24, 39, 0.24);
-  padding: 18px 18px 22px;
+  padding: 16px 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   z-index: 8;
   overflow-y: auto;
   transition: transform 0.28s ease, opacity 0.28s ease;
@@ -54,19 +55,19 @@ body {
 .sidebar-header {
   display: grid;
   place-items: center;
-  padding: 12px 8px 8px;
+  padding: 10px 6px 6px;
   border-radius: 18px;
 }
 
 .sidebar-header .logo {
-  width: 150px;
+  width: 135px;
   height: auto;
   object-fit: contain;
 }
 
 .sidebar-nav {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .navlink,
@@ -75,11 +76,11 @@ body {
   background-color: #ffffff00;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 10px;
+  padding: 10px 12px;
   text-decoration: none;
   color: #ffffff;
-  border-radius: 16px;
+  border-radius: 14px;
   transition: all 0.2s ease;
   border-color: #ffffff00;
 }
@@ -100,10 +101,10 @@ body {
 }
 
 .nav-icon {
-  font-size: 20px;
-  width: 30px;
-  height: 30px;
-  border-radius: 12px;
+  font-size: 18px;
+  width: 26px;
+  height: 26px;
+  border-radius: 10px;
   display: grid;
   place-items: center;
   color: #ffffff;
@@ -111,7 +112,7 @@ body {
 
 
 .nav-label {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.2px;
   color: #f7f9ff;
@@ -130,18 +131,18 @@ body {
 .nav-toggle-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .nav-toggle-arrow {
-  font-size: 18px;
+  font-size: 16px;
   color: #f7f9ff;
 }
 
 .nav-submenu {
   display: grid;
-  gap: 6px;
-  padding-left: 10px;
+  gap: 5px;
+  padding-left: 8px;
 }
 
 .navlink-sub {
@@ -165,11 +166,11 @@ body {
   justify-content: center;
   align-items: center;
   gap: 0px;
-  padding: 12px;
+  padding: 10px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0);
   color: #fff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.18s ease;
@@ -196,7 +197,7 @@ body {
   inset: 0;
   background: linear-gradient(120deg, var(--rosa) 0%, var(--morado) 45%, var(--cian) 100%);
   color: #ffffff;
-  padding: 28px 34px 34px calc(var(--sidebar-width) + var(--sidebar-gap) );
+  padding: 28px 34px 34px calc(var(--sidebar-width) + var(--sidebar-gap) + 20px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -257,10 +258,11 @@ body {
   cursor: pointer;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
   transition: transform 0.18s ease, background 0.2s ease;
+  font-size: 17px;
 }
 
 .header-toggle:hover {
-  transform: translateY(-1px);
+  transform: scale(1.05);
   background: rgba(255, 255, 255, 0.22);
 }
 
@@ -274,9 +276,18 @@ body {
 
 .titulo-seccion {
   margin: 0;
-  letter-spacing: 0.8px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  font-size: clamp(1.6rem, 2vw + 1rem, 2.4rem);
+  font-size: clamp(2rem, 1vw + 1rem, 1.8rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Oswald", sans-serif;
+  font-weight: 430;
+}
+
+.titulo-seccion-icon {
+  font-size: clamp(2rem, 2vw, 1.6rem);
 }
 
 .header-user {
@@ -336,17 +347,22 @@ body {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #ffffff;
-  color: #2c3553;
+  background: linear-gradient(130deg ,#ff7fdd, #847add);
+  color: #ffffff;
   font-weight: 900;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
 }
 
 .admin-main {
   position: relative;
   z-index: auto;
   margin-top: calc(var(--header-height) - 170px);
-  padding: 0 34px 48px calc(var(--sidebar-width) + var(--sidebar-gap));
+  padding: 0 34px 48px calc(var(--sidebar-width) + var(--sidebar-gap) + 20px);
 }
 
 .admin-shell.sidebar-hidden .admin-main {
@@ -479,15 +495,14 @@ body {
 }
 
 .card-producto {
-  background: #ffffff;
+  background: linear-gradient(135deg, #ef40ff, #e017ff, #49b0ff);;
   border-radius: 18px;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.422);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e6ecf5;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
+} 
 
 .card-producto:hover {
   transform: translateY(-2px);
@@ -503,15 +518,19 @@ body {
 }
 
 .card-contenido {
-  padding: 14px 14px 10px;
+  padding: 14px 14px 12px;
   display: grid;
   gap: 6px;
+  border-radius: 14px;
+  margin: 8px 10px 0;
+  box-shadow: inset 0 0px 0 rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.151);
 }
 
 h3.card-titulo {
   font-size: 0.90rem;
   font-weight: 700;
-  color: #004ed5;
+  color: #ffffff;
   line-height: 1.3;
   min-height: 2.6em;
 }
@@ -523,9 +542,9 @@ h3.card-titulo {
   overflow: hidden;             /* Oculta el texto desbordado */
   text-overflow: ellipsis;
   margin: 0;
-  color: #4b5563;
+  color: #ffffff;
   font-size: 0.80rem;
-  line-height: 1.4;
+  line-height: 1.5;
   min-height: 3.0em;
 }
 
@@ -533,16 +552,14 @@ h3.card-titulo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px 13px 12px;
-  background: #f8fafc;
-  border-top: 1px solid #e8edf5;
+  padding: 10px 13px 12px;
 }
 
 span.card-precio {
-  font-weight: 450;
+  font-weight: 650;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 1.30rem;
-  color: #0f172a;
+  color: #e9e9e9;
 }
 
 .btn-editar {
@@ -721,7 +738,7 @@ span.card-precio {
 .modal-producto {
   width: min(640px, 96vw);
   max-height: 90vh;
-  background: linear-gradient(180deg, #f44ba1 0%, #6c5ff8 45%, #2fb3f1 100%);
+  background: linear-gradient(135deg, #ff2fa3 0%, #7a2fd6 45%, #1698d6 100%);
   border-radius: 20px;
   color: #fff;
   overflow: hidden;

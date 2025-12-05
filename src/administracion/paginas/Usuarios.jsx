@@ -17,7 +17,7 @@ import {
   obtenerPermisosRol,
   actualizarPermisosRol,
 } from "../servicios/usuarios";
-import {FiSettings, FiSearch} from "react-icons/fi";
+import {FiUserCheck, FiSearch} from "react-icons/fi";
   
 export default function Usuarios() {
   const { usuario: usuarioActual } = useAuth();
@@ -578,7 +578,7 @@ export default function Usuarios() {
                           <h3>{rol.nombre}</h3>
                           <p>ID: {rol.id}</p>
                         </div>
-                        <div className="rol-card-icon"> <FiSettings></FiSettings> </div>
+                        <div className="rol-card-icon"> <FiUserCheck></FiUserCheck> </div>
                       </div>
                       <div className="rol-card-meta">
                         Creado: {new Date(rol.creado_en).toLocaleDateString()}

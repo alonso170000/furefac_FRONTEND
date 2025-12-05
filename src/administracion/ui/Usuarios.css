@@ -115,7 +115,7 @@
 }
 
 .usuarios-tabla thead {
-  background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+  background: linear-gradient(135deg, #ff17ae, #36bcff);
 }
 
 .usuarios-tabla thead th {
@@ -123,7 +123,7 @@
   text-align: left;
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--gris-texto);
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -239,12 +239,12 @@
   padding: 20px;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
   transition: all 0.2s ease;
-  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  background: linear-gradient(100deg, #00b5e2d5 0%, #ff3eb5d6 100%);
 }
 
 .rol-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+  box-shadow: 0 10px 20px rgba(0, 22, 74, 0.313);
 }
 
 .rol-card-header {
@@ -258,23 +258,31 @@
   margin: 0 0 4px 0;
   font-size: 1.3rem;
   font-weight: 800;
-  color: var(--gris-texto);
+  color: #ffff;
 }
 
 .rol-card-info p {
   margin: 0;
   font-size: 0.8rem;
-  color: #6b7280;
+  color: #ffffff;
 }
 
 .rol-card-icon {
-  font-size: 2.5rem;
+  height: 50px;
+  width: 50px;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
   filter: grayscale(0.2);
+  color: #ffffff;
+  background: linear-gradient(135deg ,#ff7fe3,#d80085);
+  padding: 10px;
+  border-radius: 50%;
 }
 
 .rol-card-meta {
-  font-size: 0.75rem;
-  color: #9ca3af;
+  font-size: 0.8rem;
+  color: #ffffff;
   margin-bottom: 16px;
 }
 
@@ -340,7 +348,7 @@
 }
 
 .permisos-tabla thead {
-  background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+  background: linear-gradient(100deg, #e02c9bd6 0%, #00b5e2d5 100%);
 }
 
 .permisos-tabla thead th {
@@ -348,10 +356,10 @@
   text-align: center;
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--gris-texto);
+  color: #ffff;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border: 1px solid #e7edf7;
+  border: 1px solid #e7edf75e;
 }
 
 .permisos-tabla thead th:first-child {
@@ -431,7 +439,7 @@
 .modal-usuarios-contenido {
   width: min(700px, 96vw);
   max-height: 90vh;
-  background: linear-gradient(180deg, var(--rosa) 0%, var(--morado) 45%, var(--cian) 100%);
+  background: linear-gradient(135deg, #ff2fa3 0%, #7a2fd6 45%, #1698d6 100%);
   border-radius: 20px;
   color: #ffffff;
   overflow: hidden;

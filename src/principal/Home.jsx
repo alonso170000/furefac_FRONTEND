@@ -298,14 +298,14 @@ export default function PrincipalHome() {
         </div>
         
         <div className="header-contenedor">
+          <div className="header-logo">
+            <img src="/src/assets/fundacion_blanco.png" alt="Fundación Recolectando Felicidad A.C" />
+          </div>
+
           <nav className="header-menu">
             <a href="#productos" className="menu-link">Productos</a>
             <a href="#contacto" className="menu-link">Contáctanos</a>
           </nav>
-          
-          <div className="header-logo">
-            <img src="/src/assets/fundacion_blanco.png" alt="Fundación Recolectando Felicidad A.C" />
-          </div>
         </div>
       </header>
 

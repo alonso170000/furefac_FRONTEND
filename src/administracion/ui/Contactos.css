@@ -37,7 +37,7 @@
 }
 
 .btn-nuevo {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #77f688, #04c548);
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -151,7 +151,6 @@
 }
 
 .contacto-numero {
-  font-family: 'Courier New', monospace;
   color: #6b7280;
 }
 
@@ -284,7 +283,7 @@
 .modal-contactos-contenido {
   width: min(500px, 96vw);
   max-height: 90vh;
-  background: linear-gradient(180deg, #ec4899 0%, #8b5cf6 45%, #06b6d4 100%);
+  background: linear-gradient(135deg, #ff2fa3 0%, #7a2fd6 45%, #1698d6 100%);
   border-radius: 20px;
   color: #ffffff;
   overflow: hidden;
@@ -347,7 +346,8 @@
   color: #ffffff;
 }
 
-.modal-contactos-field input {
+.modal-contactos-field input,
+.modal-contactos-field select {
   border: none;
   border-radius: 12px;
   padding: 12px 16px;
@@ -363,7 +363,8 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.modal-contactos-field input:focus {
+.modal-contactos-field input:focus,
+.modal-contactos-field select:focus {
   background: rgba(255, 255, 255, 0.22);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
 }

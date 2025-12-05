@@ -13,6 +13,7 @@ import {
   FiChevronsUp,
   FiChevronUp,
   FiX,
+  FiAtSign,
   FiMenu
 } from "react-icons/fi";
 import "./admin.css";
@@ -26,12 +27,12 @@ const enlaces = [
 ];
 
 const enlacesBuzon = [
-  { to: "/administracion/buzon/cotizaciones", label: "Cotizaciones", icon: FiMessageSquare },
-  { to: "/administracion/buzon/comentarios", label: "Comentarios", icon: FiInbox },
+  { to: "/administracion/buzon/cotizaciones", label: "Cotizaciones", icon: FiPackage },
+  { to: "/administracion/buzon/comentarios", label: "Comentarios", icon: FiMessageSquare },
 ];
 
 const enlacesConfig = [
-  { to: "/administracion/contactos", label: "Contactos", icon: FiSettings }, // ← CORREGIDO: era /configuracion/contactos
+  { to: "/administracion/contactos", label: "Contactos", icon: FiAtSign }, // ← CORREGIDO: era /configuracion/contactos
 ];
 
 function obtenerIniciales(nombre) {
@@ -55,11 +56,15 @@ export default function LayoutAdmin() {
   const avatarIniciales = useMemo(() => obtenerIniciales(nombreUsuario), [nombreUsuario]);
 
   const tituloSeccion = useMemo(() => {
-    const segmento = location.pathname.replace("/administracion", "").split("/").filter(Boolean)[0] || "";
-    const mapa = {
+    const segmentos = location.pathname
+      .replace("/administracion", "")
+      .split("/")
+      .filter(Boolean);
+
+    const etiquetas = {
       productos: "Productos",
       usuarios: "Usuarios",
-      historial: "Historial",
+      historial: "Historial de compras",
       buzon: "Buzón",
       cotizaciones: "Cotizaciones",
       comentarios: "Comentarios",
@@ -68,7 +73,17 @@ export default function LayoutAdmin() {
       panel: "Panel",
       acceso: "Acceso",
     };
-    return mapa[segmento] || "Administración";
+
+    let principal = etiquetas[segmentos[0]] || "Administración";
+    let secundaria = etiquetas[segmentos[1]] || "";
+
+    // Casos donde el path es directo (p.ej. /contactos) pero queremos reflejar jerarquía
+    if (!secundaria && segmentos[0] === "contactos") {
+      principal = etiquetas.configuracion;
+      secundaria = etiquetas.contactos;
+    }
+
+    return { principal, secundaria };
   }, [location.pathname]);
 
   function cerrarSesion() {
@@ -181,7 +196,17 @@ export default function LayoutAdmin() {
               </button>
               <div className="header-text">
                 <p className="eyebrow">Administración</p>
-                <h1 className="titulo-seccion">{tituloSeccion}</h1>
+                <h1 className="titulo-seccion">
+                  {tituloSeccion.secundaria ? (
+                    <>
+                      <span>{tituloSeccion.principal}</span>
+                      <FiChevronRight className="titulo-seccion-icon" aria-hidden />
+                      <span>{tituloSeccion.secundaria}</span>
+                    </>
+                  ) : (
+                    tituloSeccion.principal
+                  )}
+                </h1>
               </div>
             </div>
             <div className="header-user">

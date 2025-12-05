@@ -10,7 +10,15 @@ import {
 } from "../servicios/cotizaciones";
 import { listarImagenesProducto, listarCategorias, listarProductos } from "../servicios/productos";
 import { listarContactosDisponibles, enviarNotificacionCompra } from "../servicios/notificaciones"; // ✅ AGREGADO
-import { FiX, FiUploadCloud, FiImage, FiPlus, FiAlertTriangle } from "react-icons/fi";
+import {
+  FiX,
+  FiUploadCloud,
+  FiImage,
+  FiPlus,
+  FiAlertTriangle,
+  FiArrowUp,
+  FiChevronDown,
+} from "react-icons/fi";
 
 const ESTADOS = [
   { value: "todos", label: "Todo" },
@@ -487,11 +495,14 @@ export default function Cotizaciones() {
     <div className="cotz-page">
       <div className="cotz-hero">
         <div className="cotz-toolbar">
-          <select className="cotz-filter" value={estado} onChange={(e) => setEstado(e.target.value)}>
-            {ESTADOS.map((op) => (
-              <option key={op.value} value={op.value}>{op.label}</option>
-            ))}
-          </select>
+          <div className="cotz-filter-wrap">
+            <select className="cotz-filter" value={estado} onChange={(e) => setEstado(e.target.value)}>
+              {ESTADOS.map((op) => (
+                <option key={op.value} value={op.value}>{op.label}</option>
+              ))}
+            </select>
+            <FiChevronDown className="cotz-filter-icon" aria-hidden="true" />
+          </div>
         </div>
         <div className="cotz-hero-top">
           <div className="cotz-actions">
@@ -628,7 +639,7 @@ export default function Cotizaciones() {
                     <label className="cotz-field">
                       <span>Fecha:</span>
                       <input
-                        className="cotz-input"
+                        className="cotz-input-date"
                         type="date"
                         value={compraForm.fecha}
                         onChange={(e) => setCompraForm((p) => ({ ...p, fecha: e.target.value }))}

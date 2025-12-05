@@ -6,21 +6,30 @@
 
 .hist-hero {
   border-radius: 18px;
-  padding: 0px 10px 10px;
-  color: #fff;
+  padding: 6px 10px 14px;
+  color: #0f172a;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.hist-title {
+  margin: 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.4px;
 }
 
 .hist-search {
-  background: #f7f7f7;
+  background: linear-gradient(135deg, #f7f9fc, #edf2ff);
   border-radius: 16px;
-  border-color: none;
-  padding: 8px 19px;
+  padding: 10px 14px 10px 14px;
   min-width: 280px;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.078), 0 7px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12);
+  border: 1px solid #e4e8f2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .hist-search input {
@@ -28,12 +37,18 @@
   outline: none;
   width: 100%;
   font-size: 14px;
-  background: #f7f7f7;
+  background: transparent;
+  color: #0f172a;
+}
+
+.hist-search-icon {
+  color: #4f46e5;
+  font-size: 18px;
 }
 
 .hist-card {
-  background: #ffffff;
-  border-radius: 22px;
+  background: #f3fbfd;
+  border-radius: 30px;
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
   padding: 12px;
 }
@@ -47,34 +62,42 @@
   border-collapse: collapse;
   min-width: 860px;
   color: #1f2937;
+  border-radius: 25px;
+  overflow: hidden;
+}
+
+.hist-table thead {
+  background: linear-gradient(135deg, #ff17ae, #36bcff);
 }
 
 .hist-table th,
 .hist-table td {
   padding: 12px 10px;
-  border: 1px solid #e5e7eb;
   font-size: 14px;
 }
 
 .hist-table th {
-  background: #ff1493;
   color: #fff;
   font-weight: 800;
   text-align: left;
+  letter-spacing: 0.3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.hist-table th:first-child {
-  border-top-left-radius: 14px;
-}
-.hist-table th:last-child {
-  border-top-right-radius: 14px;
+.hist-table tbody tr {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.18s ease;
+  
 }
 
-.hist-table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 14px;
+.hist-table tbody tr:hover {
+  background: #ffeffa;
 }
-.hist-table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 14px;
+
+.hist-table td {
+  border-bottom: 1px solid #eaacff;
+  border-left: 1px solid #e6e6e6;
 }
 
 .hist-empty {
@@ -93,34 +116,85 @@
 }
 
 .hist-actions {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
+  justify-content: center;
 }
 
-.hist-pill {
+.hist-btn {
   border: none;
-  border-radius: 16px;
-  padding: 8px 10px;
+  border-radius: 12px;
+  padding: 7px 10px;
   font-weight: 700;
   color: #0f172a;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  box-shadow: 0 8px 14px rgba(15, 23, 42, 0.08);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
 }
 
-.hist-pill:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+.hist-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(15, 23, 42, 0.12);
 }
 
-.hist-pill-yellow {
-  background: #ffe066;
+.hist-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
-.hist-pill-green {
-  background: #82e4aa;
+
+.hist-btn-yellow {
+  color: #ffff;
+  background: linear-gradient(135deg, #ffd667, #d2a811);
 }
-.hist-pill-blue {
-  background: #a6d9ff;
+
+.hist-btn-green {
+  background: linear-gradient(135deg, #56ff80, #008037);
+  color: #ffffff;
+}
+.hist-btn-blue {
+  background: linear-gradient(135deg, #87d1fb, #0087bc);
+  color: #ffffff;
+}
+
+.hist-confirm-card {
+  width: min(420px, 92vw);
+  background: linear-gradient(135deg, #ff059f, #003752);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+  text-align: center;
+  display: grid;
+  gap: 14px;
+}
+
+.hist-confirm-icon {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto;
+  border-radius: 25px;
+  background: #00000036;
+  color: #ffed89bd;
+  display: grid;
+  place-items: center;
+  font-size: 40px;
+}
+
+.hist-confirm-text {
+  margin: 0;
+  color: #ffffffc8;
+  font-weight: 700;
+}
+
+.hist-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 900px) {
@@ -131,6 +205,28 @@
   }
   .hist-search {
     width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .hist-title {
+    font-size: 1.2rem;
+  }
+  .hist-card {
+    padding: 10px;
+  }
+  .hist-table th,
+  .hist-table td {
+    font-size: 13px;
+    padding: 10px 8px;
+  }
+  .hist-actions {
+    gap: 6px;
+  }
+  .hist-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 

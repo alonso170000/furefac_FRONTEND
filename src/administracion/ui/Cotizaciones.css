@@ -36,7 +36,7 @@
 
 .cotz-btn-new {
   border: none;
-  background: #7ed957;
+  background: linear-gradient(135deg, #67ff6f, #00c261);
   color: #fff;
   padding: 10px 20px;
   border-radius: 20px;
@@ -71,16 +71,47 @@
   align-items: center;
 }
 
+.cotz-filter-wrap {
+  border: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #d667ff, #8b5cf6);
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(139, 92, 246, 0.28);
+}
+
 .cotz-filter {
   border: none;
-  background: #b056ff;
+  background: linear-gradient(135deg, #d86eff, #8f00be);
   color: #fff;
-  padding: 10px 20px;
-  border-radius: 20px;
+  padding: 10px 40px 10px 14px;
+  border-radius: 16px;
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(255, 157, 0, 0.3);
+  outline: none;
+  appearance: none;
+  min-width: 170px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.cotz-filter:focus {
+  box-shadow: 0 0 0px 20px rgba(255, 255, 255, 0.12), 0 0 5px 3px rgba(139, 92, 246, 0.22);
+}
+
+.cotz-filter-icon {
+  position: absolute;
+  right: 12px;
+  color: #ffffff;
+  font-size: 18px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.cotz-filter option {
+  background: #0f1024;
+  color: #fff;
 }
 
 .cotz-list {
@@ -143,7 +174,7 @@
 
 .cotz-date {
   text-align: center;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.947);
   padding: 8px 12px;
   border-radius: 12px;
   min-width: 60px;
@@ -151,6 +182,7 @@
   font-size: 11px;
   text-transform: uppercase;
   line-height: 1.3;
+  color: #ffffff;
 }
 
 .cotz-date-day {
@@ -509,6 +541,14 @@
     width: 100%;
     order: -1;
   }
+
+  .cotz-filter-wrap {
+    width: 100%;
+  }
+
+  .cotz-filter {
+    width: 100%;
+  }
   
   .cotz-actions {
     flex: 1;
@@ -696,6 +736,14 @@
   gap: 10px;
 }
 
+.cotz-panel-selects option {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  color: #000000;
+  background-color: #1d2b42;
+}
+
 .cotz-field {
   display: flex;
   flex-direction: column;
@@ -705,33 +753,65 @@
   color: #f7f9ff;
 }
 
+.cotz-field option {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #0f1024;
+}
+
 .cotz-field span {
   opacity: 0.92;
+  color: #ffffff;
 }
 
 .cotz-input,
-.cotz-textarea {
+.cotz-textarea{
   width: 100%;
   border: none;
   border-radius: 12px;
   padding: 11px 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #0f1d2f;
+  background: rgba(0, 0, 0, 0.189);
+  color: #ffffff;
   font-size: 14px;
   font-weight: 700;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
   transition: all 0.2s ease;
 }
 
-.cotz-textarea {
+.cotz-input-date{
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 12px;
+  background: rgba(0, 0, 0, 0.189);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  transition: all 0.2s ease;
+}
+
+.cotz-textarea{
   min-height: 120px;
   resize: vertical;
+  color: #ffffff;
+  outline: none;
+}
+
+.cotz-textarea::placeholder,
+.cotz-input::placeholder {
+  min-height: 80px;
+  color: #ffffffa3;
 }
 
 .cotz-input:focus,
 .cotz-textarea:focus {
-  outline: 2px solid #ffc6ff;
+  outline: 1px solid #ffc6ff;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+  color: #ffffff;
 }
 
 .cotz-product-visor {
@@ -798,7 +878,7 @@
 .cotz-product-description {
   margin: 0;
   line-height: 1.5;
-  color: #e9edff;
+  color: #ffffff;
   opacity: 0.9;
   background: rgba(0, 0, 0, 0.18);
   padding: 12px;
