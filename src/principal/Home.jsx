@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { listarProductos } from "../administracion/servicios/productos";
 import { crearComentarioPublico } from "../administracion/servicios/comentarios";
 import imgPlaceholder from "../assets/manos.jpg";
+import logoBlanco from "../assets/fundacion_blanco.png";
+import logoFundacion from "../assets/logo-fundacion.png";
 import "./Home.css";
 import "./CotizarModal.css";
-import { FiArrowUp, FiChevronDown, FiSearch, FiX } from "react-icons/fi";
+import { FiChevronDown, FiSearch, FiX } from "react-icons/fi";
 
 const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 const formatoMXN = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
@@ -64,6 +66,7 @@ export default function PrincipalHome() {
   const [enviandoCotizacion, setEnviandoCotizacion] = useState(false);
   const [mensajeCotizacion, setMensajeCotizacion] = useState("");
   const [errorCotizacion, setErrorCotizacion] = useState("");
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   useEffect(() => {
     cargarProductos();
@@ -139,6 +142,10 @@ export default function PrincipalHome() {
   const categoriaProductoCotizar = normalizarCategoria(productoCotizando);
   const descripcionProductoCotizar = productoCotizando?.descripcion || "Sin descripcion disponible.";
   const totalImagenesProducto = imagenesProductoCotizar.length;
+  const seccionesScroll = {
+    productos: "productos",
+    contacto: "contacto",
+  };
 
   function handleInputChange(e) {
     const { name, value } = e.target;
@@ -246,6 +253,15 @@ export default function PrincipalHome() {
     setIndiceImagenCotizar((i) => (i - 1 + imagenesProductoCotizar.length) % imagenesProductoCotizar.length);
   }
 
+  function irASeccion(id) {
+    const destinoId = seccionesScroll[id] || id;
+    const el = document.getElementById(destinoId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setMenuAbierto(false);
+  }
+
   async function enviarCotizacion(e) {
     e.preventDefault();
     try {
@@ -299,12 +315,28 @@ export default function PrincipalHome() {
         
         <div className="header-contenedor">
           <div className="header-logo">
-            <img src="/src/assets/fundacion_blanco.png" alt="Fundación Recolectando Felicidad A.C" />
+            <img src={logoBlanco} alt="Fundación Recolectando Felicidad A.C" />
           </div>
 
-          <nav className="header-menu">
-            <a href="#productos" className="menu-link">Productos</a>
-            <a href="#contacto" className="menu-link">Contáctanos</a>
+          <button
+            type="button"
+            className={`btn-menu-mobile ${menuAbierto ? "abierto" : ""}`}
+            onClick={() => setMenuAbierto((v) => !v)}
+            aria-label="Abrir menú"
+            aria-expanded={menuAbierto}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <nav className={`header-menu ${menuAbierto ? "abierto" : ""}`}>
+            <button type="button" className="menu-link" onClick={() => irASeccion("productos")}>
+              Productos
+            </button>
+            <button type="button" className="menu-link" onClick={() => irASeccion("contacto")}>
+              Contáctanos
+            </button>
           </nav>
         </div>
       </header>
@@ -574,7 +606,16 @@ export default function PrincipalHome() {
           )}
 
           {!cargandoProductos && !errorProductos && productosFiltrados.length === 0 && (
-            <div className="estado-productos">No hay productos para mostrar.</div>
+            <div className="estado-productos estado-vacio">
+              <img
+                src="/log_rehilete.png"
+                alt="Sin productos disponibles"
+                className="estado-vacio-imagen rotar-lento"
+              />
+              <div className="estado-vacio-textos">
+                <p className="estado-vacio-titulo">No se encontraron productos disponibles.</p>
+              </div>
+            </div>
           )}
 
           {!cargandoProductos && !errorProductos && productosFiltrados.map((producto) => (
@@ -665,7 +706,7 @@ export default function PrincipalHome() {
       <footer className="footer">
         <div className="footer-contenido">
           <div className="footer-columna">
-            <img src="/src/assets/logo-fundacion.png" alt="Logo" className="footer-logo" />
+            <img src={logoFundacion} alt="Logo" className="footer-logo" />
             <p className="footer-descripcion">
               Fundación Recolectando Felicidad A.C.<br />
               Transformando vidas a través de tu apoyo
