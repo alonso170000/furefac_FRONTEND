@@ -36,6 +36,20 @@ export async function eliminarProducto(id) {
   return await res.json();
 }
 
+export async function obtenerRelacionesProducto(id) {
+  const res = await fetchAutenticado(`/api/productos/${id}/relaciones`);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.message || "No se pudieron obtener las relaciones del producto");
+  return data;
+}
+
+export async function cerrarCotizacionesProducto(id) {
+  const res = await fetchAutenticado(`/api/productos/${id}/cerrar-cotizaciones`, { method: "POST" });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.message || "No se pudieron cerrar las cotizaciones del producto");
+  return data;
+}
+
 export async function listarImagenesProducto(id) {
   const res = await fetchAutenticado(`/api/producto-imagenes/producto/${id}`);
   if (!res.ok) throw new Error("No se pudieron cargar imagenes");

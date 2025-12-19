@@ -31,7 +31,7 @@ export default function Historial() {
   useEffect(() => {
     cargar();
   }, []);
-
+  
   async function cargar() {
     try {
       setCargando(true);
@@ -75,6 +75,8 @@ export default function Historial() {
     if (Number.isNaN(num)) return valor ?? "";
     return num.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
+
+  const formatearMonedaMXN = (valor) => `${formatearMoneda(valor)} MXN`;
 
   async function enriquecerDetalleConCotizacion(data) {
     let precioOriginal = data?.producto_precio ?? null;
@@ -335,12 +337,14 @@ export default function Historial() {
                           <input
                             className="hist-input"
                             readOnly
-                            value={
-                              detalle?.precio_original ??
-                              detalle?.producto_precio ??
-                              detalle?.producto_precio_snap ??
-                              ""
-                            }
+                            value={(() => {
+                              const val =
+                                detalle?.precio_original ??
+                                detalle?.producto_precio ??
+                                detalle?.producto_precio_snap ??
+                                "";
+                              return val === "" ? "" : formatearMonedaMXN(val);
+                            })()}
                           />
                         </label>
                         <label className="hist-field">
@@ -383,7 +387,15 @@ export default function Historial() {
                       </label>
                       <label className="hist-field">
                         <span>Precio unitario final:</span>
-                        <input className="hist-input" readOnly value={detalle?.precio_unitario_final ?? ""} />
+                        <input
+                          className="hist-input"
+                          readOnly
+                          value={
+                            detalle?.precio_unitario_final == null
+                              ? ""
+                              : formatearMonedaMXN(detalle?.precio_unitario_final)
+                          }
+                        />
                       </label>
                     </div>
                     <div className="hist-two-cols">
@@ -393,7 +405,11 @@ export default function Historial() {
                       </label>
                       <label className="hist-field">
                         <span>Total:</span>
-                        <input className="hist-input" readOnly value={detalle?.total ?? ""} />
+                        <input
+                          className="hist-input"
+                          readOnly
+                          value={detalle?.total == null ? "" : formatearMonedaMXN(detalle?.total)}
+                        />
                       </label>
                     </div>
                     {detalle?.metodo_pago_otro && (
@@ -468,7 +484,7 @@ export default function Historial() {
                             <td>{reciboDetalle?.producto_nombre || reciboDetalle?.producto || "-"}</td>
                             <td>{reciboDetalle?.cantidad ?? "-"}</td>
                             <td className="hist-recibo-num">
-                              {formatearMoneda(reciboDetalle?.precio_unitario_final ?? reciboDetalle?.precio_original ?? 0)}
+                              {formatearMonedaMXN(reciboDetalle?.precio_unitario_final ?? reciboDetalle?.precio_original ?? 0)}
                             </td>
                           </tr>
                         </tbody>
@@ -476,7 +492,7 @@ export default function Historial() {
 
                       <div className="hist-recibo-pago">
                         <div><strong>Método de pago: </strong>{reciboDetalle?.metodo_pago || "-"}</div>
-                        <div><strong>Total: </strong>{formatearMoneda(reciboDetalle?.total ?? 0)}</div>
+                        <div><strong>Total: </strong>{formatearMonedaMXN(reciboDetalle?.total ?? 0)}</div>
                       </div>
 
                       <div className="hist-recibo-footer">
@@ -543,7 +559,7 @@ export default function Historial() {
                 <td>{reciboDetalle?.producto_nombre || reciboDetalle?.producto || "-"}</td>
                 <td>{reciboDetalle?.cantidad ?? "-"}</td>
                 <td className="hist-recibo-num">
-                  {formatearMoneda(reciboDetalle?.precio_unitario_final ?? reciboDetalle?.precio_original ?? 0)}
+                  {formatearMonedaMXN(reciboDetalle?.precio_unitario_final ?? reciboDetalle?.precio_original ?? 0)}
                 </td>
               </tr>
             </tbody>
@@ -551,7 +567,7 @@ export default function Historial() {
 
           <div className="hist-recibo-pago">
             <div><strong>Método de pago: </strong>{reciboDetalle?.metodo_pago || "-"}</div>
-            <div><strong>Total: </strong>{formatearMoneda(reciboDetalle?.total ?? 0)}</div>
+            <div><strong>Total: </strong>{formatearMonedaMXN(reciboDetalle?.total ?? 0)}</div>
           </div>
 
           <div className="hist-recibo-footer">

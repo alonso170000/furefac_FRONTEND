@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiX } from "react-icons/fi";
 import {
   crearProducto,
   listarProductos,
@@ -13,6 +13,8 @@ import {
   crearCategoria,
   actualizarCategoria,
   eliminarCategoria,
+  obtenerRelacionesProducto,
+  cerrarCotizacionesProducto,
 } from "../servicios/productos";
 import ProductoCard from "../ui/ProductoCard";
 
@@ -40,6 +42,11 @@ export default function Productos() {
   const [categoriaEditando, setCategoriaEditando] = useState(null); // id
   const [nombreEditando, setNombreEditando] = useState("");
   const [cargandoCategoriaAccion, setCargandoCategoriaAccion] = useState(false);
+  const [cambiandoActivo, setCambiandoActivo] = useState(false);
+  const [relacionesProducto, setRelacionesProducto] = useState(null);
+  const [cargandoRelaciones, setCargandoRelaciones] = useState(false);
+  const [dialogoEliminar, setDialogoEliminar] = useState(null); // {tipo:'cotizaciones'|'bloqueado'}
+  const [opcionEliminar, setOpcionEliminar] = useState("cerrar");
   const [form, setForm] = useState({
     nombre: "",
     descripcion: "",
@@ -129,6 +136,7 @@ export default function Productos() {
     setProductoActual(null);
     setForm({ nombre: "", descripcion: "", precio: "", categoria: "" });
     setImagenes([]);
+    setRelacionesProducto(null);
     setModalAbierta(true);
     setErrorModal("");
   }
@@ -139,6 +147,8 @@ export default function Productos() {
     setImagenes([]);
     setErrorModal("");
     setProductoActual(null);
+    setRelacionesProducto(null);
+    setDialogoEliminar(null);
   }
 
   async function toBase64(file) {
@@ -221,6 +231,20 @@ export default function Productos() {
     }
   }
 
+  async function cargarRelaciones(id) {
+    if (!id) return;
+    try {
+      setCargandoRelaciones(true);
+      const data = await obtenerRelacionesProducto(id);
+      setRelacionesProducto(data);
+    } catch (err) {
+      setRelacionesProducto(null);
+      setErrorModal(err?.message || "No se pudieron obtener las relaciones del producto");
+    } finally {
+      setCargandoRelaciones(false);
+    }
+  }
+
   function editarProducto(producto) {
     setModo("editar");
     setProductoActual(producto);
@@ -233,12 +257,29 @@ export default function Productos() {
     setModalAbierta(true);
     setErrorModal("");
     if (producto.id) cargarImagenesProducto(producto.id);
+    if (producto.id) cargarRelaciones(producto.id);
   }
 
-  async function eliminarProductoActual() {
+  const escenarioProducto = () => {
+    if (!productoActual?.id || !relacionesProducto) return 1;
+    const ventas = Number(relacionesProducto.ventas || 0) > 0 || Number(relacionesProducto.cot_comprado || 0) > 0;
+    const cotAbiertas = Number(relacionesProducto.cot_pendientes || 0) + Number(relacionesProducto.cot_no_comprado || 0);
+    if (ventas) return 3;
+    if (cotAbiertas > 0) return 2;
+    return 1;
+  };
+
+  const estaDesactivado = () => {
+    if (relacionesProducto && relacionesProducto.activo !== undefined) return Number(relacionesProducto.activo) === 0;
+    return Number(productoActual?.activo || 0) === 0;
+  };
+
+  async function eliminarProductoActual({ skipConfirm = false } = {}) {
     if (!productoActual?.id) return;
-    const confirmado = window.confirm("¿Eliminar este producto? Esta acción no se puede deshacer.");
-    if (!confirmado) return;
+    if (!skipConfirm) {
+      const confirmado = window.confirm("¿Eliminar este producto? Esta acción no se puede deshacer.");
+      if (!confirmado) return;
+    }
 
     try {
       setEliminandoProducto(true);
@@ -248,6 +289,58 @@ export default function Productos() {
       cargar();
     } catch (err) {
       setErrorModal(err.message || "No se pudo eliminar el producto");
+    } finally {
+      setEliminandoProducto(false);
+    }
+  }
+
+  async function actualizarActivoProducto(activoDestino = 0) {
+    if (!productoActual?.id) return;
+    try {
+      setCambiandoActivo(true);
+      setErrorModal("");
+      await actualizarProducto(productoActual.id, { activo: activoDestino });
+      setProductoActual((prev) => (prev ? { ...prev, activo: activoDestino } : prev));
+      setRelacionesProducto((prev) => (prev ? { ...prev, activo: activoDestino } : prev));
+      cargar();
+    } catch (err) {
+      setErrorModal(err.message || "No se pudo actualizar el estado del producto");
+    } finally {
+      setCambiandoActivo(false);
+    }
+  }
+
+  function manejarEliminarProducto() {
+    if (!productoActual?.id) return;
+    if (!relacionesProducto) {
+      cargarRelaciones(productoActual.id);
+      setErrorModal("Obteniendo estado del producto, intenta nuevamente en un momento.");
+      return;
+    }
+    const escenario = escenarioProducto();
+    if (escenario === 3) {
+      setDialogoEliminar({ tipo: "bloqueado" });
+      return;
+    }
+    if (escenario === 2) {
+      setOpcionEliminar("cerrar");
+      setDialogoEliminar({ tipo: "cotizaciones" });
+      return;
+    }
+    eliminarProductoActual();
+  }
+
+  async function cerrarCotizacionesYEliminar() {
+    if (!productoActual?.id) return;
+    try {
+      setEliminandoProducto(true);
+      setErrorModal("");
+      await cerrarCotizacionesProducto(productoActual.id);
+      await eliminarProductoActual({ skipConfirm: true });
+      setDialogoEliminar(null);
+      window.alert("Producto eliminado correctamente.\\nLas cotizaciones fueron marcadas como no compradas.");
+    } catch (err) {
+      setErrorModal(err.message || "No se pudo completar la eliminación");
     } finally {
       setEliminandoProducto(false);
     }
@@ -504,14 +597,24 @@ export default function Productos() {
 
               <div className="modal-actions">
                 {modo === "editar" && (
-                  <button
-                    type="button"
-                    className="btn-rojo"
-                    onClick={eliminarProductoActual}
-                    disabled={enviando || eliminandoProducto}
-                  >
-                    {eliminandoProducto ? "Eliminando..." : "Eliminar"}
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      className={estaDesactivado() ? "btn-reactivar" : "btn-desactivar"}
+                      onClick={() => actualizarActivoProducto(estaDesactivado() ? 1 : 0)}
+                      disabled={enviando || eliminandoProducto || cambiandoActivo}
+                    >
+                      {estaDesactivado() ? "Reactivar" : "Desactivar"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-rojo"
+                      onClick={manejarEliminarProducto}
+                      disabled={enviando || eliminandoProducto || cargandoRelaciones}
+                    >
+                      {eliminandoProducto ? "Eliminando..." : "Eliminar"}
+                    </button>
+                  </>
                 )}
                 <button
                   type="submit"
@@ -522,6 +625,85 @@ export default function Productos() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {dialogoEliminar && (
+        <div className="modal-backdrop" onClick={() => setDialogoEliminar(null)}>
+          <div className="modal-producto modal-dialogo-alerta" onClick={(e) => e.stopPropagation()}>
+            <div className="dialogo-header">
+              <div className="dialogo-icon">!</div>
+              <div className="dialogo-head-text">
+                {dialogoEliminar.tipo === "cotizaciones" ? (
+                  <>
+                    <h3 className="dialogo-titulo">Cotizaciones pendientes</h3>
+                    <p className="dialogo-texto">Se deben cambiar a "No comprado" antes de eliminar.</p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="dialogo-titulo">Producto con compras</h3>
+                    <p className="dialogo-texto">No puede eliminarse porque tiene historial de compras o cotizaciones compradas.</p>
+                  </>
+                )}
+              </div>
+              <button className="modal-close" aria-label="Cerrar" onClick={() => setDialogoEliminar(null)}>
+                <FiX />
+              </button>
+            </div>
+
+            {dialogoEliminar.tipo === "cotizaciones" && (
+              <div className="dialogo-body">
+                <label className="dialogo-radio">
+                  <input
+                    type="radio"
+                    checked={opcionEliminar === "cerrar"}
+                    onChange={() => setOpcionEliminar("cerrar")}
+                  />
+                  <span>Cerrar cotizaciones como "No comprado" y eliminar producto.</span>
+                </label>
+                <div className="modal-actions dialogo-actions">
+                  <button type="button" className="btn-secundario" onClick={() => setDialogoEliminar(null)}>
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-rojo"
+                    onClick={cerrarCotizacionesYEliminar}
+                    disabled={eliminandoProducto}
+                  >
+                    {eliminandoProducto ? "Procesando..." : "Confirmar"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {dialogoEliminar.tipo === "bloqueado" && (
+              <div className="dialogo-body">
+                <p className="dialogo-texto">¿Deseas desactivar este producto?</p>
+                <ul className="dialogo-lista">
+                  <li>No aparecerá en el catálogo.</li>
+                  <li>Seguirá visible en historial y reportes.</li>
+                  <li>Se puede reactivar después.</li>
+                </ul>
+                <div className="modal-actions dialogo-actions">
+                  <button type="button" className="btn-secundario" onClick={() => setDialogoEliminar(null)}>
+                    Cerrar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-rojo"
+                    onClick={() => {
+                      setDialogoEliminar(null);
+                      if (!estaDesactivado()) actualizarActivoProducto(0);
+                    }}
+                    disabled={cambiandoActivo || estaDesactivado()}
+                  >
+                    {cambiandoActivo ? "Actualizando..." : estaDesactivado() ? "Ya desactivado" : "Desactivar"}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

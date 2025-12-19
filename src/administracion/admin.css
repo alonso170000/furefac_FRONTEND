@@ -921,6 +921,38 @@ span.card-precio {
   cursor: pointer;
 }
 
+.btn-desactivar {
+  background: linear-gradient(135deg, #ba24fb, #f9165e);
+  color: #ffffff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 800;
+  box-shadow: 0 8px 16px rgba(249, 115, 22, 0.3);
+}
+
+.btn-desactivar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(249, 115, 22, 0.4);
+  cursor: pointer;
+}
+
+.btn-reactivar {
+  background: linear-gradient(135deg, #e5910a, #e9e20e);
+  color: #f8fafc;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 800;
+  box-shadow: 0 8px 16px rgba(14, 165, 233, 0.3);
+}
+
+.btn-reactivar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(22, 147, 249, 0.4);
+  cursor: pointer;
+}
+
 .btn-rojo {
   background: linear-gradient(135deg, #f87171, #dc2626);
   border: none;
@@ -936,6 +968,74 @@ span.card-precio {
 .btn-rojo:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 20px rgba(220, 38, 38, 0.35);
+}
+
+.modal-dialogo-alerta {
+  max-width: 540px;
+  background: linear-gradient(135deg, #ff2fa3 0%, #7a2fd6 45%, #1698d6 100%);
+  border: 0px solid rgba(255,255,255,0.14);
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.35);
+  padding: 18px 18px 14px;
+}
+
+.dialogo-titulo {
+  margin: 0 0 8px 0;
+  color: #fff;
+}
+
+.dialogo-texto {
+  margin: 0 0 10px 0;
+  color: #e5e7eb;
+}
+
+.dialogo-radio {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: #e5e7eb;
+}
+
+.dialogo-lista {
+  margin: 8px 0 12px 18px;
+  color: #f3f4f6;
+}
+
+.dialogo-actions {
+  justify-content: flex-start;
+}
+
+.dialogo-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.dialogo-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f59e0b, #f43f5e);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  box-shadow: 0 8px 16px rgba(244, 63, 94, 0.35);
+}
+
+.dialogo-head-text {
+  display: grid;
+  gap: 4px;
+}
+
+.dialogo-body {
+  display: grid;
+  gap: 12px;
 }
 
 .modal-body .btn-verde {
